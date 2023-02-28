@@ -31,3 +31,57 @@ To play against the model, run the following command:
     python3 play.py
 
 The model is loaded from the `model` directory.
+
+### Folder structure
+
+alphaGo-knock-off/
+├── config/
+│ ├── **init**.py
+│ ├── game_config.py
+│ ├── model_config.py
+│ └── mcts_config.py
+├── data/
+│ ├── **init**.py
+│ ├── sgf/
+│ │ ├── train/
+│ │ └── test/
+│ ├── processed/
+│ │ ├── train/
+│ │ └── test/
+│ ├── raw_data_downloader.py
+│ └── data_processor.py
+├── game/
+│ ├── **init**.py
+│ ├── hex_game.py
+│ ├── hex_board.py
+│ ├── hex_player.py
+│ ├── hex_rule.py
+│ └── hex_utils.py
+├── model/
+│ ├── **init**.py
+│ ├── hex_model.py
+│ ├── hex_value_model.py
+│ └── hex_policy_model.py
+├── mcts/
+│ ├── **init**.py
+│ ├── hex_mcts.py
+│ └── mcts_utils.py
+├── reinforcement_learning/
+│ ├── **init**.py
+│ ├── actor.py
+│ ├── critic.py
+│ ├── hex_reinforcement_learning.py
+│ └── rl_utils.py
+├── topp/
+│ ├── **init**.py
+│ ├── topp_game.py
+│ ├── topp_policy.py
+│ ├── topp_tournament.py
+│ └── topp_utils.py
+├── utils/
+│ ├── **init**.py
+│ ├── sgf_utils.py
+│ ├── logging_utils.py
+│ └── other_utils.py
+├── main.py
+└── requirements.txt
