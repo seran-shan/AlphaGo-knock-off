@@ -34,6 +34,7 @@ The model is loaded from the `model` directory.
 
 ### Folder structure
 
+```bash
 alphaGo-knock-off/
 ├── config/
 │ ├── **init**.py
@@ -85,3 +86,4 @@ alphaGo-knock-off/
 │ └── other_utils.py
 ├── main.py
 └── requirements.txt
+```
