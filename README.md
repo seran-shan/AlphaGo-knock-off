@@ -28,7 +28,7 @@ The training data is stored in the `data` directory. The model is saved in the `
 
 To play against the model, run the following command:
 
-    python3 play.py
+    python3 main.py
 
 The model is loaded from the `model` directory.
 
