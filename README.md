@@ -36,54 +36,30 @@ The model is loaded from the `model` directory.
 
 ```bash
 alphaGo-knock-off/
-├── config/
-│ ├── **init**.py
-│ ├── game_config.py
-│ ├── model_config.py
-│ └── mcts_config.py
-├── data/
-│ ├── **init**.py
-│ ├── sgf/
-│ │ ├── train/
-│ │ └── test/
-│ ├── processed/
-│ │ ├── train/
-│ │ └── test/
-│ ├── raw_data_downloader.py
-│ └── data_processor.py
 ├── game/
-│ ├── **init**.py
-│ ├── hex_game.py
-│ ├── hex_board.py
-│ ├── hex_player.py
-│ ├── hex_rule.py
-│ └── hex_utils.py
-├── model/
-│ ├── **init**.py
-│ ├── hex_model.py
-│ ├── hex_value_model.py
-│ └── hex_policy_model.py
+│ ├── __init__.py
+│ ├── board.py
+│ ├── moves.py
+│ └── win_conditions.py
+├── neural_network/
+│ ├── __init__.py
+│ ├── model.py
+│ └── training.py
 ├── mcts/
-│ ├── **init**.py
-│ ├── hex_mcts.py
-│ └── mcts_utils.py
+│ ├── __init__.py
+│ ├── node.py
+│ └── search.py
 ├── reinforcement_learning/
-│ ├── **init**.py
+│ ├── __init__.py
 │ ├── actor.py
 │ ├── critic.py
-│ ├── hex_reinforcement_learning.py
-│ └── rl_utils.py
+│ ├── environment.py
+│ └── training.py
 ├── topp/
-│ ├── **init**.py
-│ ├── topp_game.py
-│ ├── topp_policy.py
-│ ├── topp_tournament.py
-│ └── topp_utils.py
-├── utils/
-│ ├── **init**.py
-│ ├── sgf_utils.py
-│ ├── logging_utils.py
-│ └── other_utils.py
+│ ├── __init__.py
+│ ├── competition.py
+│ ├── evaluation.py
+│ └── ranking.py
 ├── main.py
 └── requirements.txt
 ```
