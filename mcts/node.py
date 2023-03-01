@@ -1,12 +1,13 @@
 '''
 This module contains the Node class, which is used to represent a node in the search tree.
 '''
-import numpy as np
+
 
 class Node:
     '''
     The Node class is used to represent a node in the search tree.
     '''
+
     def __init__(self, state, parent=None):
         self.state = state
         self.parent: 'Node' = parent
@@ -31,7 +32,7 @@ class Node:
         child_node = Node(child_state, self)
         self.children.append(child_node)
         return child_node
-    
+
     def add_children(self, child_states):
         '''
         Add multiple child nodes to the current node.
@@ -56,20 +57,24 @@ class Node:
         self.visits += 1
         self.value += value
 
-    def calculate_tree_policy(self, exploration_constant: float, child: 'Node') -> float:
+    def is_leaf(self) -> bool:
         '''
-        Calculate the tree policy of the current node.
-
-        Parameters
-        ----------
-        exploration_constant : float
-            The exploration constant used in the tree policy.
-        child : Node
-            The child node.
+        Check if the current node is a leaf node.
 
         Returns
         -------
-        tree_policy : float
-            The tree policy of the current node.
+        is_leaf : bool
+            True if the current node is a leaf node, False otherwise.
         '''
-        return child.value / child.visits + exploration_constant * np.sqrt(np.log(self.visits) / child.visits)
+        return len(self.children) == 0
+
+    def is_root(self) -> bool:
+        '''
+        Check if the current node is the root node.
+
+        Returns
+        -------
+        is_root : bool
+            True if the current node is the root node, False otherwise.
+        '''
+        return self.parent is None
