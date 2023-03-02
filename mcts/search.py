@@ -154,3 +154,30 @@ class TreePolicy:
         else:
             next_node = self.minimize()
         return next_node
+
+
+class DefaultPolicy:
+    '''
+    The Default_policy class is used to represent the default policy of the 
+    Monte Carlo Tree Search algorithm.
+    '''
+
+    def __init__(self, node: Node, actions: list):
+        self.node: Node = node
+
+    def __call__(self) -> int:
+        '''
+        Using the default policy to select the next action.
+
+        Parameters
+        ----------
+        node : Node
+            The current node.
+
+        Returns
+        -------
+        action : int
+            The next action.
+        '''
+        action = np.random.choice(self.node.state.get_actions())
+        return action
