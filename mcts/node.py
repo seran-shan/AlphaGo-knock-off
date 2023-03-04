@@ -78,3 +78,21 @@ class Node:
             True if the current node is the root node, False otherwise.
         '''
         return self.parent is None
+
+    def expand(self, next_states, illegal_state=None):
+        '''
+        Expand the current node by adding its children.
+
+        Parameters
+        ----------
+        next_states : list of State
+            The states of the child nodes.
+        illegal_state : float
+            The state of the illegal child node.
+        '''
+        if illegal_state is not None:
+            legal_child_states = [
+                state != illegal_state for state in next_states]
+            self.add_children(legal_child_states)
+        else:
+            self.add_children(next_states)
