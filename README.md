@@ -43,7 +43,7 @@ alphaGo-knock-off/
 │ └── win_conditions.py
 ├── neural_network/
 │ ├── __init__.py
-│ ├── model.py
+│ ├── anet.py
 │ └── training.py
 ├── mcts/
 │ ├── __init__.py
