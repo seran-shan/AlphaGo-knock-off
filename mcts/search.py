@@ -53,7 +53,7 @@ class MCTS:
         value: int
             The value of the leaf node.
         '''
-        return DefaultPolicy(leaf_node.state)
+        return DefaultPolicy(leaf_node.state)(leaf_node.value)
 
     def backpropagate(self, node: Node, value: int):
         '''
