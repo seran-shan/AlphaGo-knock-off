@@ -54,6 +54,7 @@ class Node:
         value : int
             The value of the current node.
         '''
+        print("Value: ", value)
         self.visits += 1
         self.value += value
 
@@ -96,3 +97,28 @@ class Node:
             self.add_children(legal_child_states)
         else:
             self.add_children(next_states)
+
+    def get_best_child(self) -> 'Node':
+        '''
+        Get the best child node of the current node.
+
+        Returns
+        -------
+        best_child : Node
+            The best child node.
+        '''
+        best_child = max(self.children, key=lambda child: child.value)
+        return best_child
+
+    def __str__(self) -> str:
+        return f'Node({self.state}, {self.visits}, {self.value})'
+
+
+class State:
+    '''
+    The State class is used to represent a state in the search tree.
+    '''
+
+    def __init__(self, board, player):
+        self.board = board
+        self.player = player
