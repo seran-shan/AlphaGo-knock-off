@@ -81,9 +81,9 @@ class TreePolicy:
         value: float
             The value of the child node.
         '''
-        q_value = child_node.value / child_node.visits
-        n_value = np.log(child_node.parent.visits) / child_node.visits
-        exploration_bonus = self.c_punt * np.sqrt(n_value)
+        q_value = child_node.value / (child_node.visits + 1)
+        exploration_bonus = self.c_punt * \
+            np.sqrt(np.log(self.node.visits + 1)) / (child_node.visits + 1)
 
         return q_value + exploration_bonus
 
@@ -120,7 +120,7 @@ class DefaultPolicy:
     def __init__(self, node: Node):
         self.node: Node = node
 
-    def __call__(self, target_value) -> int:
+    def __call__(self) -> int:
         '''
         Using the target policy to evaluate the leaf node. Randomly selecting child
         nodes until the game is finished.
@@ -129,10 +129,10 @@ class DefaultPolicy:
         ----------
         node: Node
             The leaf node.
-        target_value: int
-            The value of the target state.
         '''
-        curr_node = self.node
-        while not curr_node.value == target_value:
+        curr_node: Node = self.node
+        while not curr_node.is_terminal():
+            if len(curr_node.children) == 0:
+                break
             curr_node = random.choice(curr_node.children)
         return curr_node.value
