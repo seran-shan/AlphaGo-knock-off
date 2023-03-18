@@ -3,6 +3,7 @@ This module contains a class to build a neural network model by using Keras
 '''
 from enum import Enum
 from tensorflow import keras
+import numpy as np
 
 
 class ANet:
@@ -38,24 +39,98 @@ class ANet:
         match self.optimizer:
             case Optimizer.ADAGRAD:
                 model.compile(optimizer=keras.optimizers.Adagrad(learning_rate=self.learning_rate),
-                              loss='sparse_categorical_crossentropy',
-                              metrics=['accuracy'])
+                              loss=keras.losses.SparseCategoricalCrossentropy(),
+                              metrics=[keras.metrics.SparseCategoricalAccuracy()])
             case Optimizer.ADAM:
                 model.compile(optimizer=keras.optimizers.Adam(learning_rate=self.learning_rate),
-                              loss='sparse_categorical_crossentropy',
-                              metrics=['accuracy'])
+                              loss=keras.losses.SparseCategoricalCrossentropy(),
+                              metrics=[keras.metrics.SparseCategoricalAccuracy()])
             case Optimizer.RMSPROP:
                 model.compile(optimizer=keras.optimizers.RMSprop(learning_rate=self.learning_rate),
-                              loss='sparse_categorical_crossentropy',
-                              metrics=['accuracy'])
+                              loss=keras.losses.SparseCategoricalCrossentropy(),
+                              metrics=[keras.metrics.SparseCategoricalAccuracy()])
             case Optimizer.SGD:
                 model.compile(optimizer=keras.optimizers.SGD(learning_rate=self.learning_rate),
-                              loss='sparse_categorical_crossentropy',
-                              metrics=['accuracy'])
+                              loss=keras.losses.SparseCategoricalCrossentropy(),
+                              metrics=[keras.metrics.SparseCategoricalAccuracy()])
             case _:
                 raise ValueError('Invalid optimizer')
 
         return model
+
+    def train(self, state: np.ndarray, target: np.ndarray, batch_size=1):
+        '''
+        Train the neural network model
+
+        Parameters
+        ----------
+        state : numpy.ndarray
+            A state of the game
+        target : numpy.ndarray
+            A target value of the state
+        batch_size : int
+            The number of samples per gradient update
+        '''
+        self.model.fit(state, target, batch_size=batch_size)
+
+    def predict(self, state):
+        '''
+        Predict the value of the state
+
+        Parameters
+        ----------
+        state : numpy.ndarray
+            A state of the game
+
+        Returns
+        -------
+        numpy.ndarray
+            A value of the state
+        '''
+        return self.model.predict(state)
+
+    def save(self, identifier: str, epoch: int):
+        '''
+        Save the neural network model
+
+        Parameters
+        ----------
+        identifier : str
+            A identifier of the model
+        epoch : int
+            The number of epochs
+        '''
+        self.model.save(f'models/{identifier}_{epoch}.h5')
+
+
+def load_model(identifier: str, M: int) -> keras.Model:
+    '''
+    Load the neural network model
+
+    Parameters
+    ----------
+    identifier : str
+        A identifier of the model
+
+    M : int
+        The number of models
+
+    Returns
+    -------
+    keras.Model
+        A neural network model
+    '''
+    try:
+        nets = [keras.models.load_model(
+            f'models/{identifier}_{i + 1}.h5') for i in range(M)]
+    except OSError as exc:
+        raise OSError('No model found') from exc
+    except ValueError as exc:
+        raise ValueError('Invalid model') from exc
+    except Exception as exc:
+        raise Exception('Unknown error') from exc
+
+    return nets
 
 
 class Optimizer(Enum):
