@@ -1,6 +1,7 @@
 '''
 This module contains the Node class, which is used to represent a node in the search tree.
 '''
+from game import State
 
 
 class Node:
@@ -8,7 +9,7 @@ class Node:
     The Node class is used to represent a node in the search tree.
     '''
 
-    def __init__(self, state, parent=None):
+    def __init__(self, state: State, parent=None):
         self.state = state
         self.parent: 'Node' = parent
         self.children: list['Node'] = []
@@ -54,7 +55,6 @@ class Node:
         value : int
             The value of the current node.
         '''
-        print("Value: ", value)
         self.visits += 1
         self.value += value
 
@@ -79,6 +79,17 @@ class Node:
             True if the current node is the root node, False otherwise.
         '''
         return self.parent is None
+
+    def is_terminal(self) -> bool:
+        '''
+        Check if the current node is a terminal node.
+
+        Returns
+        -------
+        is_terminal : bool
+            True if the current node is a terminal node, False otherwise.
+        '''
+        return self.state.is_terminal()
 
     def expand(self, next_states, illegal_state=None):
         '''
@@ -112,13 +123,3 @@ class Node:
 
     def __str__(self) -> str:
         return f'Node({self.state}, {self.visits}, {self.value})'
-
-
-class State:
-    '''
-    The State class is used to represent a state in the search tree.
-    '''
-
-    def __init__(self, board, player):
-        self.board = board
-        self.player = player
