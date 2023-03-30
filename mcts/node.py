@@ -1,7 +1,7 @@
 '''
 This module contains the Node class, which is used to represent a node in the search tree.
 '''
-from game.hex.hex import State
+from game import State
 
 
 class Node:
@@ -15,7 +15,7 @@ class Node:
         self.children: list['Node'] = []
         self.visits: int = 0
         self.value: float = 0
-        self.last_move = None
+        self.last_child = None
 
     def add_child(self, child_state) -> 'Node':
         '''
@@ -91,24 +91,6 @@ class Node:
             True if the current node is a terminal node, False otherwise.
         '''
         return self.state.is_terminal()
-    
-    def get_value(self) -> int:
-        '''
-        Get the value of the current node.
-        '''
-        return self.state.get_value()
-    
-    def get_last_move(self) -> 'str':
-        '''
-        Get the last move made in the current node.
-
-        Returns
-        -------
-        last_move : str
-            The last move made in the current node.
-
-        '''
-        return self.state.get_last_move()
 
     def expand(self, next_states, illegal_state=None):
         '''

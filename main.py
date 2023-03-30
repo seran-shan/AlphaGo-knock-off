@@ -35,7 +35,7 @@ from mcts.mcts2 import MCTS as MCTS2
 #         print("Human wins!")
 
 
-def main(): 
+def main():
     '''
     Play Hex with a human and AI.
     '''
@@ -43,7 +43,7 @@ def main():
     root_node = Node(game)
 
     while not game.is_terminal():
-        print(game.board) # Display the game state
+        print(game.board)  # Display the game state
         if game.player == 0:
             move = game.get_move()
             print("Human move: ", move)
@@ -52,25 +52,23 @@ def main():
             best_child = mcts()
             move = best_child.state.last_move
             print("AI move: ", move)
-        
+
         game.make_move(move)
         root_node = Node(game)
-    
-    print(game.board) # Display the final game state
+
+    print(game.board)  # Display the final game state
     if game.get_winner() == 1:
         print("AI wins!")
     else:
         print("Human wins!")
 
 
-# def main(): 
+# def main():
 #     game = Hex(3)
 #     root_node = Node(game)
 #     mcts = MCTS2(root_node, 1000)
 #     best_child = mcts()
 #     print(best_child.state.last_move)
-
-
 
 if __name__ == "__main__":
     main()
