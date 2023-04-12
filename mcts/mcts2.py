@@ -28,8 +28,21 @@ class MCTS():
             node = node.parent
 
     def best_move(self) -> Node:
-        return max(self.root_node.children, key=lambda node: node.value / node.visits)
+        '''
+        Get the best move from the root node. If player is 1, then the best move is a maximum, otherwise it is a minimum.
 
+        Returns
+
+        -------
+        best_move : Node
+            The best move from the root node.
+        '''
+
+        if self.root_node.state.player == 1:
+            return max(self.root_node.children, key=lambda node: node.value / (node.visits + 1))
+        else:
+           return min(self.root_node.children, key=lambda node: node.value / (node.visits + 1)) 
+        
     def __call__(self) -> Node:
         for _ in range(self.n_simulations):
             leaf_node = self.search()

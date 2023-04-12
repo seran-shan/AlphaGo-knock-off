@@ -91,6 +91,17 @@ class Node:
             True if the current node is a terminal node, False otherwise.
         '''
         return self.state.is_terminal()
+    
+    def get_value(self) -> int:
+        '''
+        Get the value of the current node.
+
+        Returns
+        -------
+        value : float
+            The value of the current node.
+        '''
+        return self.state.get_value()
 
     def expand(self, next_states, illegal_state=None):
         '''
