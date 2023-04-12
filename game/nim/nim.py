@@ -28,6 +28,20 @@ class State:
         """
         pass
 
+    def get_possible_states(self):
+        """
+        Return a list of possible states from the current state
+
+        """
+        pass
+
+    def update_state(self, new_state):
+        """
+        Update the state by applying the new state
+
+        """
+        pass
+
 
 class Nim(State):
     '''
@@ -124,6 +138,18 @@ class Nim(State):
             if self.validate_move(i):
                 moves.append(i)
         return moves
+    
+    def get_possible_states(self):
+        """
+        Return a list of possible states from the current state
+
+        """
+        child_states = []
+        for move in self.get_legal_moves():
+            child_state = Nim(self.pieces, self.max_pieces, self.player)
+            child_state.make_move(move)
+            child_states.append(child_state)
+        return child_states
 
     def make_move(self, move):
         '''
@@ -140,6 +166,14 @@ class Nim(State):
         self.check_winner()
 
         return Nim(self.pieces, self.max_pieces, self.player)
+
+    def update_state(self, new_state):
+        """
+        Update the state by applying the new state
+
+        """
+        move = new_state.pieces
+        return self.make_move(move)
 
     def expand(self):
         """

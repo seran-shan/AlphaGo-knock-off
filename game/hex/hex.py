@@ -34,7 +34,7 @@ class State:
 
         """
         pass
-    
+
     def get_value(self):
         """
         Return the value of the current state
@@ -43,7 +43,7 @@ class State:
         pass
 
 
-class Hex: 
+class Hex:
     """
     Hex game class. 
 
@@ -68,16 +68,16 @@ class Hex:
 
     """
 
-    def __init__(self, size): 
+    def __init__(self, size):
         self.size = size
         self.board = np.array([[0 for i in range(size)] for j in range(size)])
-        self.player = 0 
+        self.player = 0
         self.winner = None
         self.last_move = None
         # Disjoint set to check if there is a path from one side to the other
         self.disjoint_set_player_0 = DisjointSet()
         self.disjoint_set_player_1 = DisjointSet()
-    
+
     def get_move(self):
         """
         Get a move from the player. 
@@ -86,7 +86,7 @@ class Hex:
         -------
         move : tuple of int 
             A move consists of an x and y coordinate on the board.
-        """ 
+        """
         x = int(input("Enter x coordinate: "))
         y = int(input("Enter y coordinate: "))
         move = (x, y)
@@ -94,7 +94,7 @@ class Hex:
             print("Invalid move")
             return self.get_move()
         return move
-    
+
     def validate_move(self, move):
         """
         Check if a move is valid.
@@ -108,16 +108,16 @@ class Hex:
         if move not in self.get_legal_moves():
             return False
         return True
-    
+
     def get_winner(self):
         return self.winner
-    
+
     def get_value(self):
         return self.get_winner()
-    
+
     def is_terminal(self):
         return self.get_winner() is not None
-    
+
     def set_winner(self, winner):
         self.winner = int(winner)
 
@@ -126,10 +126,10 @@ class Hex:
 
     def get_last_move(self):
         return self.last_move
-    
+
     def set_last_move(self, move):
         self.last_move = move
-    
+
     def get_legal_moves(self):
         """
         Return a list of legal moves. A move is a tuple (x, y) where x and y are the coordinates of the move.
@@ -140,8 +140,8 @@ class Hex:
                 if self.board[i][j] == 0:
                     moves.append((i, j))
         return moves
-    
-    def make_move(self, move): 
+
+    def make_move(self, move):
         """
         Make a move on the board, change the player to move, and check if the game is over.
         """
@@ -171,7 +171,7 @@ class Hex:
             state.make_move(move)
             states.append(state)
         return states
-    
+
     def check_winner(self):
         """
         Check if the game is over, and set the winner if the game is over.
@@ -186,12 +186,11 @@ class Hex:
                 if self.board[i][0] == -1 and self.board[j][self.size - 1] == -1:
                     if self.disjoint_set_player_0.connected((i, 0), (j, self.size - 1)):
                         self.set_winner(-1)
-                        
+
                 if self.board[0][i] == 1 and self.board[self.size - 1][j] == 1:
                     if self.disjoint_set_player_1.connected((0, i), (self.size - 1, j)):
                         self.set_winner(1)
-                        
-                    
+
     def get_adjecent_neighbours(self, x, y):
         """
         Return a list of adjecent neighbours of a position on the board.
@@ -223,7 +222,6 @@ class Hex:
         if y < self.size - 1:
             neighbours.append((x, y + 1))
         return neighbours
-
 
 
 if __name__ == "__main__":
