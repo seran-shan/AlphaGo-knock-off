@@ -33,8 +33,10 @@ class MCTS():
         if curr_root_node.children == []:
             legal_moves = curr_root_node.state.expand()
             curr_root_node.expand(legal_moves)
-        curr_root_node = random.choice(curr_root_node.children)
+        # Selecting the best child node based on the UCB1 formula
+        curr_root_node = self.select()
         return curr_root_node
+        #curr_root_node = random.choice(curr_root_node.children)
     
 
     def leaf_evaluation(self, leaf_node: Node) -> int:
@@ -58,7 +60,7 @@ class MCTS():
                 legal_moves = leaf_node.state.expand()
                 leaf_node.expand(legal_moves)
             leaf_node = random.choice(leaf_node.children)
-        return leaf_node.get_value()
+        return leaf_node
     
 
     def backpropagate(self, node: Node, value: int):
@@ -99,12 +101,12 @@ class MCTS():
             q = 0
         else:
             q = child_node.value / child_node.visits
-        exploration_bonus = c_punt * np.sqrt(np.log(self.root_node.visits) / child_node.visits)
+        exploration_bonus = c_punt * np.sqrt(np.log(self.root_node.visits+1) / (child_node.visits + 1))
         return q - exploration_bonus if child_node.state.player == 1 else q + exploration_bonus
     
 
     
-    def best_move(self) -> Node:
+    def select(self) -> Node:
         '''
         Get the best move from the root node. If player is 1, then the best move is a maximum, otherwise it is a minimum.
 
@@ -125,6 +127,21 @@ class MCTS():
         #     return max(self.root_node.children, key=lambda node: node.value / (node.visits + 1))
         # else:
         #    return min(self.root_node.children, key=lambda node: node.value / (node.visits + 1)) 
+
+    def best_move(self) -> Node:
+        '''
+        Get the best move from the root node. If player is 1, then the best move is a maximum, otherwise it is a minimum.
+
+        Returns
+
+        -------
+        best_move : Node
+            The best move from the root node.
+        '''
+        if self.root_node.state.player == 1:
+            return max(self.root_node.children, key=lambda node: node.value / (node.visits + 1))
+        else:
+           return min(self.root_node.children, key=lambda node: node.value / (node.visits + 1))
         
     def __call__(self) -> Node:
         '''
@@ -138,11 +155,7 @@ class MCTS():
         
         for _ in range(self.n_simulations):
             leaf_node = self.search()
-            if not leaf_node.is_terminal():
-                if leaf_node.children == []:    
-                    legal_moves = leaf_node.state.expand()
-                    leaf_node.expand(legal_moves)
-                node = random.choice(leaf_node.children)
-            eval = self.leaf_evaluation(node)
-            self.backpropagate(node, eval)
+            leaf_node = self.leaf_evaluation(leaf_node)
+            eval = leaf_node.state.get_value()
+            self.backpropagate(leaf_node, eval)
         return self.best_move()

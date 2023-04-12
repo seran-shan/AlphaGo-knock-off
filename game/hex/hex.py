@@ -74,6 +74,10 @@ class Hex:
         self.player = 0
         self.winner = None
         self.last_move = None
+        # Intialize legal moves
+        self.legal_moves = {(i, j) for i in range(size) for j in range(size)}
+        # Intialize neighbors of each position
+        self.neighbors = {(i, j): self.get_adjecent_neighbours(i,j) for i in range(size) for j in range(size)}
         # Disjoint set to check if there is a path from one side to the other
         self.disjoint_set_player_0 = DisjointSet()
         self.disjoint_set_player_1 = DisjointSet()
@@ -105,9 +109,7 @@ class Hex:
             The move to check.
 
         """
-        if move not in self.get_legal_moves():
-            return False
-        return True
+        return move in self.legal_moves
 
     def get_winner(self):
         return self.winner
@@ -134,12 +136,7 @@ class Hex:
         """
         Return a list of legal moves. A move is a tuple (x, y) where x and y are the coordinates of the move.
         """
-        moves = []
-        for i in range(self.size):
-            for j in range(self.size):
-                if self.board[i][j] == 0:
-                    moves.append((i, j))
-        return moves
+        return self.legal_moves
 
     def make_move(self, move):
         """
@@ -147,14 +144,15 @@ class Hex:
         """
         x, y = move
         self.board[x][y] = -1 if self.player == 0 else 1
+        self.legal_moves.remove(move)
         if self.player == 0:
             self.disjoint_set_player_0.find(move)
-            for neighbour in self.get_adjecent_neighbours(x, y):
+            for neighbour in self.neighbors[x, y]:
                 if self.board[neighbour[0]][neighbour[1]] == -1:
                     self.disjoint_set_player_0.union(move, neighbour)
         else:
             self.disjoint_set_player_1.find(move)
-            for neighbour in self.get_adjecent_neighbours(x, y):
+            for neighbour in self.neighbors[x, y]:
                 if self.board[neighbour[0]][neighbour[1]] == 1:
                     self.disjoint_set_player_1.union(move, neighbour)
         self.set_last_move(move)
@@ -223,11 +221,12 @@ class Hex:
             neighbours.append((x, y + 1))
         return neighbours
 
-
+# main
 if __name__ == "__main__":
-    game = Hex(3)
+    game = Hex(5)
     while not game.is_terminal():
-        print(game.board)
         move = game.get_move()
         game.make_move(move)
-    print("Winner: ", game.get_winner())
+        print(game.board)
+    print("Winner is", game.get_winner())
+

@@ -20,7 +20,7 @@ def main():
             move = game.get_move()
             print("Human move: ", move)
         else:
-            mcts = MCTS2(root_node, 500)
+            mcts = MCTS2(root_node, 100)
             best_child = mcts()
             move = best_child.state.last_move
             print("AI move: ", move)
