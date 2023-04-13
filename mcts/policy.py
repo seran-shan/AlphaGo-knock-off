@@ -12,60 +12,31 @@ class TreePolicy:
     Monte Carlo Tree Search algorithm.
     '''
 
-    def __init__(self, node: Node, c_punt: float, turn: int):
+    def __init__(self, node: Node, c_punt: float = np.sqrt(2)):
         self.node: Node = node
         self.c_punt: float = c_punt
-        self.turn: int = turn
 
     def maximize(self) -> Node:
         '''
         Select the child node with the highest value.
-
-        Parameters
-        ----------
-        node: Node
-            The current node.
-        c_punt: float
-            The exploration constant.
 
         Returns
         -------
         max_child_node: Node
             The child node with the highest value.
         '''
-        max_value = -np.inf
-        max_child_node: Node = None
-        for child_node in self.node.children:
-            value = self.calculate_value(child_node)
-            if value >= max_value:
-                max_value = value
-                max_child_node = child_node
-        return max_child_node
+        return max(self.node.children, key=self.calculate_value)
 
     def minimize(self) -> Node:
         '''
         Select the child node with the lowest value.
-
-        Parameters
-        ----------
-        node: Node
-            The current node.
-        c_punt: float
-            The exploration constant.
 
         Returns
         -------
         min_child_node: Node
             The child node with the lowest value.
         '''
-        min_value = np.inf
-        min_child_node: Node = None
-        for child_node in self.node.children:
-            value = self.calculate_value(child_node)
-            if value <= min_value:
-                min_value = value
-                min_child_node = child_node
-        return min_child_node
+        return min(self.node.children, key=self.calculate_value)
 
     def calculate_value(self, child_node: Node) -> float:
         '''
@@ -81,11 +52,13 @@ class TreePolicy:
         value: float
             The value of the child node.
         '''
-        q_value = child_node.value / (child_node.visits + 1)
+        if child_node.visits == 0:
+            q_value = 0
+        else:
+            q_value = child_node.value / child_node.visits
         exploration_bonus = self.c_punt * \
-            np.sqrt(np.log(self.node.visits + 1)) / (child_node.visits + 1)
-
-        return q_value + exploration_bonus
+            np.sqrt(np.log(self.node.visits+1) / (child_node.visits + 1))
+        return q_value - exploration_bonus if child_node.state.player == 1 else q_value + exploration_bonus
 
     def __call__(self) -> Node:
         '''
@@ -102,7 +75,7 @@ class TreePolicy:
         next_node: Node
             The next node.
         '''
-        if self.turn % 2 == 0:
+        if self.node.state.player == 1:
             next_node = self.maximize()
         else:
             next_node = self.minimize()
@@ -132,7 +105,8 @@ class DefaultPolicy:
         '''
         curr_node: Node = self.node
         while not curr_node.is_terminal():
-            if len(curr_node.children) == 0:
-                break
+            if curr_node.children == []:
+                possible_next_states = curr_node.state.expand()
+                curr_node.expand(possible_next_states)
             curr_node = random.choice(curr_node.children)
-        return curr_node.value
+        return curr_node
