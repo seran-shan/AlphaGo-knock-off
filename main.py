@@ -1,10 +1,8 @@
 '''
 Main file for the Nim game.
 '''
-from game import Nim, Hex
+from game import Hex
 from mcts import MCTS, Node
-from mcts.mcts2 import MCTS as MCTS2
-
 
 
 def main():
@@ -20,9 +18,9 @@ def main():
             move = game.get_move()
             print("Human move: ", move)
         else:
-            mcts = MCTS2(root_node, 100)
+            mcts = MCTS(root_node, 500)
             best_child = mcts()
-            move = best_child.state.last_move
+            move = best_child.state.get_previous_state()
             print("AI move: ", move)
 
         game.make_move(move)

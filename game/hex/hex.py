@@ -1,6 +1,10 @@
+'''
+This module exports the Hex game class. 
+'''
+
+import copy
 import numpy as np
 from disjoint_set import DisjointSet
-import copy
 
 
 class State:
@@ -42,6 +46,13 @@ class State:
         """
         pass
 
+    def get_previous_state(self):
+        """
+        Return the previous state
+
+        """
+        pass
+
 
 class Hex:
     """
@@ -77,7 +88,8 @@ class Hex:
         # Intialize legal moves
         self.legal_moves = {(i, j) for i in range(size) for j in range(size)}
         # Intialize neighbors of each position
-        self.neighbors = {(i, j): self.get_adjecent_neighbours(i,j) for i in range(size) for j in range(size)}
+        self.neighbors = {(i, j): self.get_adjecent_neighbours(i, j)
+                          for i in range(size) for j in range(size)}
         # Disjoint set to check if there is a path from one side to the other
         self.disjoint_set_player_0 = DisjointSet()
         self.disjoint_set_player_1 = DisjointSet()
@@ -131,6 +143,9 @@ class Hex:
 
     def set_last_move(self, move):
         self.last_move = move
+
+    def get_previous_state(self):
+        return self.get_last_move()
 
     def get_legal_moves(self):
         """
@@ -221,6 +236,7 @@ class Hex:
             neighbours.append((x, y + 1))
         return neighbours
 
+
 # main
 if __name__ == "__main__":
     game = Hex(5)
@@ -229,4 +245,3 @@ if __name__ == "__main__":
         game.make_move(move)
         print(game.board)
     print("Winner is", game.get_winner())
-
