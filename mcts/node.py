@@ -91,7 +91,7 @@ class Node:
             True if the current node is a terminal node, False otherwise.
         '''
         return self.state.is_terminal()
-    
+
     def get_value(self) -> int:
         '''
         Get the value of the current node.
@@ -123,15 +123,18 @@ class Node:
 
     def get_best_child(self) -> 'Node':
         '''
-        Get the best child node of the current node.
+        Get the best child node from the current node.
 
         Returns
+
         -------
         best_child : Node
-            The best child node.
+            The best child node. If player is 1, then the best child is a maximum, otherwise it is a minimum.
         '''
-        best_child = max(self.children, key=lambda child: child.value)
-        return best_child
+        if self.state.player == 1:
+            return max(self.children, key=lambda node: node.value / (node.visits + 1))
+        else:
+            return min(self.children, key=lambda node: node.value / (node.visits + 1))
 
     def __str__(self) -> str:
         return f'Node({self.state}, {self.visits}, {self.value})'
