@@ -3,6 +3,8 @@ Main file for the Nim game.
 '''
 from game import Hex
 from mcts import MCTS, Node
+from neural_network.anet import ANet
+from reinforcement_learning.agent import Agent
 
 
 def main():
@@ -19,9 +21,10 @@ def main():
             print("Human move: ", move)
         else:
             mcts = MCTS(root_node, 500)
-            best_child = mcts()
-            move = best_child.state.get_previous_state()
+            best_child, dist = mcts()
+            move = best_child.state.get_previous_action()
             print("AI move: ", move)
+            print("Distribution: ", dist)
 
         game.make_move(move)
         root_node = Node(game)
@@ -33,5 +36,18 @@ def main():
         print("Human wins!")
 
 
+# if __name__ == "__main__":
+    # main()
+
 if __name__ == "__main__":
-    main()
+    agent = Agent()
+    agent.run()
+
+# if __name__ == "__main__":
+#     anet = ANet(input_shape=(5*5,),
+#                 output_shape=5*5,
+#                 layers=[256, 256, 128],
+#                 activation='relu',
+#                 optimizer='adam',
+#                 learning_rate=0.001)
+#     print(anet.predict([[0]*25]))
