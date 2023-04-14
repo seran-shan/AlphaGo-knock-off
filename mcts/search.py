@@ -22,9 +22,11 @@ class MCTS:
             self,
             root_node: Node,
             n_simulations: int,
+            behavior_policy=None,
     ):
         self.root_node: Node = root_node
         self.n_simulations: int = n_simulations
+        self.behavior_policy = behavior_policy
 
     def search(self) -> Node:
         '''
@@ -62,9 +64,10 @@ class MCTS:
         evalution: int
             The value of the leaf node.
         '''
-        default_policy = DefaultPolicy(leaf_node)
-        evalution = default_policy()
-        return evalution
+        if self.behavior_policy is None:
+            default_policy = DefaultPolicy()
+            evalution: Node = default_policy(leaf_node)
+        return evalution.state.get_value()
 
     def backpropagate(self, node: Node, value: int):
         '''
@@ -82,7 +85,21 @@ class MCTS:
         if node.parent is not None:
             self.backpropagate(node.parent, value)
 
-    def __call__(self) -> Node:
+    def visit_count_distribution(self):
+        '''
+        Returns the visit count distribution of the children of the root node.
+
+        Returns
+        -------
+        distribution: list
+            The visit count distribution of the children of the root node.
+        '''
+        visit_counts = [child.visits for child in self.root_node.children]
+        total_visit_count = sum(visit_counts)
+        distribution = [count / total_visit_count for count in visit_counts]
+        return distribution
+
+    def __call__(self) -> tuple[Node, list]:
         '''
         Performing a Monte Carlo Tree Search using the tree policy to select the next node.
 
@@ -93,12 +110,13 @@ class MCTS:
 
         Returns
         -------
-        next_node: Node
-            The next node.
+        best_child: Node
+            The best child of the root node.
+        distribution: list
+            The visit count distribution of the children of the root node.
         '''
         for _ in range(self.n_simulations):
             leaf_node: Node = self.search()
-            leaf_node = self.leaf_evaluation(leaf_node)
-            evaluation = leaf_node.state.get_value()
+            evaluation = self.leaf_evaluation(leaf_node)
             self.backpropagate(leaf_node, evaluation)
-        return self.root_node.get_best_child()
+        return self.root_node.get_best_child(), self.visit_count_distribution()
