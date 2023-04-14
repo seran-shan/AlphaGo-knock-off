@@ -32,13 +32,6 @@ class State:
         """
         pass
 
-    def get_last_move(self):
-        """
-        Return the last move made in the current state
-
-        """
-        pass
-
     def get_value(self):
         """
         Return the value of the current state
@@ -46,9 +39,16 @@ class State:
         """
         pass
 
-    def get_previous_state(self):
+    def get_previous_action(self):
         """
         Return the previous state
+
+        """
+        pass
+
+    def produce_successor_state(self, action):
+        """
+        Return the successor state after performing the action
 
         """
         pass
@@ -124,27 +124,81 @@ class Hex:
         return move in self.legal_moves
 
     def get_winner(self):
+        '''
+        Return the winner of the game.
+
+        Returns
+        -------
+        winner : int or None
+            The winner of the game. None if the game is not over. 1 for the maximizer, -1 for the minimizer.
+        '''
         return self.winner
 
     def get_value(self):
+        '''
+        Return the value of the current state.
+
+        Returns
+        -------
+        value : int
+            The value of the current state.
+        '''
         return self.get_winner()
 
     def is_terminal(self):
+        '''
+        Check if the current state is a terminal state.
+
+        Returns
+        -------
+        is_terminal : bool
+            True if the current state is a terminal state, False otherwise.
+        '''
         return self.get_winner() is not None
 
     def set_winner(self, winner):
+        '''
+        Set the winner of the game.
+
+        Parameters
+        ----------
+        winner : int or None
+            The winner of the game. None if the game is not over. 1 for the maximizer, -1 for the minimizer.
+        '''
         self.winner = int(winner)
 
     def change_player(self):
+        '''
+        Change the player to move.
+        '''
         self.player = 1 - self.player
 
     def get_last_move(self):
+        '''
+        Return the last move made in the current state.
+
+        Returns
+        -------
+        last_move : tuple of int
+            The last move made in the current state.
+        '''
         return self.last_move
 
     def set_last_move(self, move):
+        '''
+        Set the last move made in the current state.
+
+        Parameters
+        ----------
+        move : tuple of int
+            The last move made in the current state.
+        '''
         self.last_move = move
 
-    def get_previous_state(self):
+    def get_previous_action(self):
+        '''
+        Return the previous action.
+        '''
         return self.get_last_move()
 
     def get_legal_moves(self):
@@ -173,6 +227,12 @@ class Hex:
         self.set_last_move(move)
         self.check_winner()
         self.change_player()
+
+    def produce_successor_state(self, action):
+        '''
+        Produce a successor state by making a move.
+        '''
+        self.make_move(action)
 
     def expand(self):
         """
