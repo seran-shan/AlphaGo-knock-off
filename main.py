@@ -5,6 +5,7 @@ from game import Hex
 from mcts import MCTS, Node
 from neural_network.anet import ANet
 from reinforcement_learning.agent import Agent
+from config.neural_network import INPUT_SHAPE, OUTPUT_SHAPE, LAYERS, ACTIVATION, OPTIMIZER, LEARNING_RATE
 
 
 def main():
@@ -44,10 +45,10 @@ if __name__ == "__main__":
     agent.run()
 
 # if __name__ == "__main__":
-#     anet = ANet(input_shape=(5*5,),
-#                 output_shape=5*5,
-#                 layers=[256, 256, 128],
-#                 activation='relu',
-#                 optimizer='adam',
-#                 learning_rate=0.001)
+#     anet = ANet(input_shape=INPUT_SHAPE,
+#                 output_shape=OUTPUT_SHAPE,
+#                 layers=LAYERS,
+#                 activation=ACTIVATION,
+#                 optimizer=OPTIMIZER,
+#                 learning_rate=LEARNING_RATE)
 #     print(anet.predict([[0]*25]))
