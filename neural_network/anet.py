@@ -18,7 +18,7 @@ class ANet:
         self.activation = activation
         self.optimizer = optimizer
         self.learning_rate = learning_rate
-        self.model = self.build_model()
+        self.model: keras.Model = self.build_model()
 
     def build_model(self) -> keras.Model:
         '''
