@@ -52,12 +52,16 @@ class TreePolicy:
         value: float
             The value of the child node.
         '''
+
+        epsilon = 1
+
         if child_node.visits == 0:
             q_value = 0
         else:
             q_value = child_node.value / child_node.visits
         exploration_bonus = self.c_punt * \
-            np.sqrt(np.log(self.node.visits+1) / (child_node.visits + 1))
+            np.sqrt(np.log(self.node.visits + epsilon) /
+                    (child_node.visits + epsilon))
         return q_value - exploration_bonus if child_node.state.player == 1 else q_value + exploration_bonus
 
     def __call__(self) -> Node:
@@ -90,10 +94,7 @@ class DefaultPolicy:
     used, since we are using on-policy Monte Carlo Tree Search.
     '''
 
-    def __init__(self, node: Node):
-        self.node: Node = node
-
-    def __call__(self) -> int:
+    def __call__(self, curr_node: Node) -> int:
         '''
         Using the target policy to evaluate the leaf node. Randomly selecting child
         nodes until the game is finished.
@@ -103,7 +104,6 @@ class DefaultPolicy:
         node: Node
             The leaf node.
         '''
-        curr_node: Node = self.node
         while not curr_node.is_terminal():
             if curr_node.children == []:
                 possible_next_states = curr_node.state.expand()
