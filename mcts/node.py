@@ -131,10 +131,7 @@ class Node:
         best_child : Node
             The best child node. If player is 1, then the best child is a maximum, otherwise it is a minimum.
         '''
-        if self.state.player == 1:
-            return max(self.children, key=lambda node: node.value / (node.visits + 1))
-        else:
-            return min(self.children, key=lambda node: node.value / (node.visits + 1))
+        return max(self.children, key=lambda node: node.visits / sum(child.visits for child in self.children))
 
     def __str__(self) -> str:
         return f'Node({self.state}, {self.visits}, {self.value})'
