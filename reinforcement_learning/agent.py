@@ -104,6 +104,7 @@ class Agent:
                 action = best_child.state.get_previous_action()
                 print("AI move: ", action)
                 mcts.root_node.state.produce_successor_state(action)
+                mcts.root_node = (Node(mcts.root_node.state))
 
             # FIXME: Uncomment the following line to use the MCTS with the neural network
             # minibatch = self.replay_buffer.sample_minibatch()
