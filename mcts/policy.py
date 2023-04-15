@@ -3,6 +3,8 @@ The policy module contains the TreePolicy and DefaultPolicy classes.
 '''
 import random
 import numpy as np
+
+from neural_network.anet import ANet
 from .node import Node
 
 
@@ -94,7 +96,7 @@ class DefaultPolicy:
     used, since we are using on-policy Monte Carlo Tree Search.
     '''
 
-    def __call__(self, curr_node: Node) -> int:
+    def __call__(self, curr_node: Node) -> Node:
         '''
         Using the target policy to evaluate the leaf node. Randomly selecting child
         nodes until the game is finished.
@@ -110,3 +112,37 @@ class DefaultPolicy:
                 curr_node.expand(possible_next_states)
             curr_node = random.choice(curr_node.children)
         return curr_node
+
+
+class TargetPolicy:
+    '''
+    The TargetPolicy class is used to represent the target policy of the
+    Monte Carlo Tree Search algorithm. This should be the policy that is used
+    to evaluate the leaf nodes. As the target policy, the target policy is
+    used, since we are using on-policy Monte Carlo Tree Search.
+    '''
+
+    def __init__(self, neural_network: ANet):
+        self.neural_network = neural_network
+
+    def __call__(self, leaf_node: Node) -> Node:
+        '''
+        Using the target policy to evaluate the leaf node. Randomly selecting child
+        nodes until the game is finished.
+
+        Parameters
+        ----------
+        node: Node
+            The leaf node.
+        '''
+        while not leaf_node.is_terminal():
+            if leaf_node.children == []:
+                possible_next_states = leaf_node.state.expand()
+                leaf_node.expand(possible_next_states)
+            state_representation = leaf_node.state.extract_represenation()
+            distribution = self.neural_network.predict(state_representation)
+            target_dist = self.neural_network.predict(
+                state_representation, distribution)
+            i = np.argmax(target_dist)
+            leaf_node = leaf_node.children[i]
+        return leaf_node

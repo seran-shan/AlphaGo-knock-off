@@ -5,7 +5,7 @@ the Monte Carlo Tree Search algorithm.
 import numpy as np
 from neural_network.anet import ANet
 from .node import Node
-from .policy import TreePolicy, DefaultPolicy
+from .policy import TargetPolicy, TreePolicy, DefaultPolicy
 
 
 class MCTS:
@@ -18,19 +18,19 @@ class MCTS:
         The root node of the search tree.
     n_simulations : int
         The number of simulations.
+    neural_network : ANet
+        The neural network.
     '''
 
     def __init__(
             self,
             root_node: Node,
             n_simulations: int,
-            behavior_policy=None,
-            nn: ANet = None
+            neural_network: ANet = None
     ):
         self.root_node: Node = root_node
         self.n_simulations: int = n_simulations
-        self.behavior_policy = behavior_policy
-        self.nn = nn
+        self.neural_network = neural_network
 
     def search(self) -> Node:
         '''
@@ -68,22 +68,12 @@ class MCTS:
         evalution: int
             The value of the leaf node.
         '''
-        if self.behavior_policy is None:
-            if self.nn is not None:
-                while not leaf_node.is_terminal():
-                    if leaf_node.children == []:
-                        possible_next_states = leaf_node.state.expand()
-                        leaf_node.expand(possible_next_states)
-                    node_presentation = leaf_node.state.extract_represenation()
-                    distribution = self.mcts.visit_count_distribution()
-                    target_dist = self.nn.predict(node_presentation, distribution)
-                    i = np.argmax(target_dist)
-                    leaf_node = leaf_node.children[i]
-                evalution = leaf_node.state.get_value()
-            else:
-                default_policy = DefaultPolicy()
-                evalution: Node = default_policy(leaf_node)
-                evalution = evalution.state.get_value()
+        if self.neural_network:
+            default_policy = DefaultPolicy()
+            evalution = default_policy(leaf_node).state.get_value()
+        else:
+            target_policy = TargetPolicy(self.neural_network)
+            evalution = target_policy(leaf_node).state.get_value()
         return evalution
 
     def backpropagate(self, node: Node, value: int):
