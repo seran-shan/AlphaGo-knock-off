@@ -58,7 +58,7 @@ class ANet:
 
         return model
 
-    def train(self, state: np.ndarray, target: np.ndarray, batch_size=1):
+    def train(self, node_features: np.ndarray, distribution: np.ndarray, target: np.ndarray, batch_size=1):
         '''
         Train the neural network model
 
@@ -71,9 +71,10 @@ class ANet:
         batch_size : int
             The number of samples per gradient update
         '''
-        self.model.fit(state, target, batch_size=batch_size)
+        input = np.hstack((node_features, distribution))
+        self.model.fit(input, target, batch_size=batch_size)
 
-    def predict(self, state):
+    def predict(self, node_features: np.ndarray, distribution: np.ndarray):
         '''
         Predict the value of the state
 
@@ -87,7 +88,9 @@ class ANet:
         numpy.ndarray
             A value of the state
         '''
-        return self.model.predict(state)
+
+        input = np.hstack((node_features, distribution))
+        return self.model.predict(input)
 
     def save(self, identifier: str, epoch: int):
         '''
