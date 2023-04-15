@@ -139,7 +139,7 @@ class TargetPolicy:
             if leaf_node.children == []:
                 possible_next_states = leaf_node.state.expand()
                 leaf_node.expand(possible_next_states)
-            state_representation = leaf_node.state.extract_represenation()
+            state_representation = leaf_node.state.extract_representation()
             target_dist = self.neural_network.predict(
                 state_representation, distribution())
             i = np.argmax(target_dist)
