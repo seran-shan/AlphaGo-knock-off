@@ -53,7 +53,12 @@ class State:
         """
         pass
 
+    def extract_represenation(self): 
+        """
+        Return the representation of the state
 
+        """
+        pass    
 class Hex:
     """
     Hex game class. 
@@ -295,7 +300,17 @@ class Hex:
         if y < self.size - 1:
             neighbours.append((x, y + 1))
         return neighbours
-
+    
+    def extract_representation(self): 
+        '''
+        Extract a representation of the current state, to feed it to a neural network.
+        
+        '''
+        flat_board = self.board.flatten()
+        player_to_move = np.array([self.player if self.player == 1 else -1])
+        last_move = np.array([self.last_move[0] * self.size + self.last_move[1] if self.last_move is not None else [-1]])
+        board_representation = np.hstack([flat_board, player_to_move, last_move])
+        return board_representation
 
 # main
 if __name__ == "__main__":
