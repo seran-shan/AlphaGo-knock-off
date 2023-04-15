@@ -69,12 +69,12 @@ class MCTS:
             The value of the leaf node.
         '''
         if self.neural_network:
-            default_policy = DefaultPolicy()
-            evalution = default_policy(leaf_node).state.get_value()
-        else:
             target_policy = TargetPolicy(self.neural_network)
             evalution = target_policy(
                 leaf_node, self.visit_count_distribution).state.get_value()
+        else:
+            default_policy = DefaultPolicy()
+            evalution = default_policy(leaf_node).state.get_value()
         return evalution
 
     def backpropagate(self, node: Node, value: int):
