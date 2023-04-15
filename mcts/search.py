@@ -2,6 +2,8 @@
 The search module contains the MCTS class, which is used to represent
 the Monte Carlo Tree Search algorithm.
 '''
+import numpy as np
+from neural_network.anet import ANet
 from .node import Node
 from .policy import TreePolicy, DefaultPolicy
 
@@ -23,10 +25,12 @@ class MCTS:
             root_node: Node,
             n_simulations: int,
             behavior_policy=None,
+            nn: ANet = None
     ):
         self.root_node: Node = root_node
         self.n_simulations: int = n_simulations
         self.behavior_policy = behavior_policy
+        self.nn = nn
 
     def search(self) -> Node:
         '''
@@ -65,9 +69,22 @@ class MCTS:
             The value of the leaf node.
         '''
         if self.behavior_policy is None:
-            default_policy = DefaultPolicy()
-            evalution: Node = default_policy(leaf_node)
-        return evalution.state.get_value()
+            if self.nn is not None:
+                while not leaf_node.is_terminal():
+                    if leaf_node.children == []:
+                        possible_next_states = leaf_node.state.expand()
+                        leaf_node.expand(possible_next_states)
+                    node_presentation = leaf_node.state.extract_represenation()
+                    distribution = self.mcts.visit_count_distribution()
+                    target_dist = self.nn.predict(node_presentation, distribution)
+                    i = np.argmax(target_dist)
+                    leaf_node = leaf_node.children[i]
+                evalution = leaf_node.state.get_value()
+            else:
+                default_policy = DefaultPolicy()
+                evalution: Node = default_policy(leaf_node)
+                evalution = evalution.state.get_value()
+        return evalution
 
     def backpropagate(self, node: Node, value: int):
         '''
