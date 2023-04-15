@@ -73,7 +73,8 @@ class MCTS:
             evalution = default_policy(leaf_node).state.get_value()
         else:
             target_policy = TargetPolicy(self.neural_network)
-            evalution = target_policy(leaf_node).state.get_value()
+            evalution = target_policy(
+                leaf_node, self.visit_count_distribution).state.get_value()
         return evalution
 
     def backpropagate(self, node: Node, value: int):
@@ -92,7 +93,7 @@ class MCTS:
         if node.parent is not None:
             self.backpropagate(node.parent, value)
 
-    def visit_count_distribution(self):
+    def visit_count_distribution(self) -> list:
         '''
         Returns the visit count distribution of the children of the root node.
 
