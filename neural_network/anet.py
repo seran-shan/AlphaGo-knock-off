@@ -71,8 +71,8 @@ class ANet:
         batch_size : int
             The number of samples per gradient update
         '''
-        input = np.hstack((node_features, distribution))
-        self.model.fit(input, target, batch_size=batch_size)
+        input_stack = np.hstack((node_features, distribution))
+        self.model.fit(input_stack, target, batch_size=batch_size)
 
     def predict(self, node_features: np.ndarray, distribution: np.ndarray):
         '''
@@ -89,8 +89,8 @@ class ANet:
             A value of the state
         '''
 
-        input = np.hstack((node_features, distribution))
-        return self.model.predict(input)
+        input_stack = np.hstack((node_features, distribution))
+        return self.model.predict(input_stack)
 
     def save(self, identifier: str, epoch: int):
         '''
@@ -125,7 +125,7 @@ def load_model(identifier: str, M: int) -> keras.Model:
     '''
     try:
         nets = [keras.models.load_model(
-            f'models/{identifier}_{i + 1}.h5') for i in range(M)]
+            f'models/{identifier}_{i + 1}') for i in range(M)]
     except OSError as exc:
         raise OSError('No model found') from exc
     except ValueError as exc:
