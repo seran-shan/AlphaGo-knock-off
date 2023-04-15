@@ -5,6 +5,8 @@ from enum import Enum
 from tensorflow import keras
 import numpy as np
 
+from config.neural_network import Activation, Optimizer
+
 
 class ANet:
     '''
@@ -34,22 +36,22 @@ class ANet:
         for layer in self.layers:
             model.add(keras.layers.Dense(layer, activation=self.activation))
         model.add(keras.layers.Dense(
-            self.output_shape, activation=Activation.SOFTMAX))
+            self.output_shape, activation=Activation.SOFTMAX.value))
 
         match self.optimizer:
-            case Optimizer.ADAGRAD:
+            case Optimizer.ADAGRAD.value:
                 model.compile(optimizer=keras.optimizers.Adagrad(learning_rate=self.learning_rate),
                               loss=keras.losses.SparseCategoricalCrossentropy(),
                               metrics=[keras.metrics.SparseCategoricalAccuracy()])
-            case Optimizer.ADAM:
+            case Optimizer.ADAM.value:
                 model.compile(optimizer=keras.optimizers.Adam(learning_rate=self.learning_rate),
                               loss=keras.losses.SparseCategoricalCrossentropy(),
                               metrics=[keras.metrics.SparseCategoricalAccuracy()])
-            case Optimizer.RMSPROP:
+            case Optimizer.RMSPROP.value:
                 model.compile(optimizer=keras.optimizers.RMSprop(learning_rate=self.learning_rate),
                               loss=keras.losses.SparseCategoricalCrossentropy(),
                               metrics=[keras.metrics.SparseCategoricalAccuracy()])
-            case Optimizer.SGD:
+            case Optimizer.SGD.value:
                 model.compile(optimizer=keras.optimizers.SGD(learning_rate=self.learning_rate),
                               loss=keras.losses.SparseCategoricalCrossentropy(),
                               metrics=[keras.metrics.SparseCategoricalAccuracy()])
@@ -134,23 +136,3 @@ def load_model(identifier: str, M: int) -> keras.Model:
         raise Exception('Unknown error') from exc
 
     return nets
-
-
-class Optimizer(Enum):
-    '''
-    Optimizer enum
-    '''
-    ADAGRAD = 'adagrad'
-    ADAM = 'adam'
-    RMSPROP = 'rmsprop'
-    SGD = 'sgd'
-
-
-class Activation(Enum):
-    '''
-    Activation enum
-    '''
-    RELU = 'relu'
-    SIGMOID = 'sigmoid'
-    TANH = 'tanh'
-    SOFTMAX = 'softmax'
