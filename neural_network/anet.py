@@ -1,11 +1,10 @@
 '''
 This module contains a class to build a neural network model by using Keras
 '''
-from enum import Enum
 from tensorflow import keras
 import numpy as np
 
-from config.neural_network import Activation, Optimizer
+from config import Activation, Optimizer
 
 
 class ANet:
@@ -105,7 +104,7 @@ class ANet:
         epoch : int
             The number of epochs
         '''
-        self.model.save(f'models/{identifier}_{epoch}.h5')
+        self.model.save(f'models/{identifier}_{epoch}')
 
 
 def load_model(identifier: str, M: int) -> keras.Model:
