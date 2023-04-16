@@ -7,6 +7,7 @@ from neural_network.anet import ANet
 from .node import Node
 from .policy import TargetPolicy, TreePolicy, DefaultPolicy
 import time
+from config import TIME_LIMIT
 
 
 class MCTS:
@@ -125,7 +126,7 @@ class MCTS:
             The visit count distribution of the children of the root node.
         '''
         start_time = time.time()
-        time_limit = 5
+        time_limit = TIME_LIMIT
         simulations = 0
 
         while time.time() - start_time < time_limit and simulations < self.n_simulations:
