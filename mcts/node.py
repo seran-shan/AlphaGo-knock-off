@@ -1,7 +1,9 @@
 '''
 This module contains the Node class, which is used to represent a node in the search tree.
 '''
+from config import BOARD_SIZE
 from game import State
+import numpy as np
 
 
 class Node:
@@ -121,6 +123,26 @@ class Node:
         else:
             self.add_children(next_states)
 
+    def visit_count_distribution(self) -> np.ndarray:
+        '''
+        Returns the visit count distribution of the children of the root node.
+
+        Returns
+        -------
+        distribution: list
+            The visit count distribution of the children of the root node.
+        '''
+        visit_counts = [0] * BOARD_SIZE**2
+
+        for child in self.children:
+            prev_action = child.state.get_previous_action()
+            index = prev_action[0] * BOARD_SIZE + prev_action[1]
+            visit_counts[index] = child.visits
+        total_visit_count = sum(visit_counts)
+        distribution = np.array(
+            [count / total_visit_count for count in visit_counts])
+        return distribution
+
     def get_best_child(self) -> 'Node':
         '''
         Get the best child node from the current node.
@@ -135,3 +157,5 @@ class Node:
 
     def __str__(self) -> str:
         return f'Node({self.state}, {self.visits}, {self.value})'
+
+    

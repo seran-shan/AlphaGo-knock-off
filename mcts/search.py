@@ -74,7 +74,7 @@ class MCTS:
         if self.neural_network:
             target_policy = TargetPolicy(self.neural_network)
             evalution = target_policy(
-                leaf_node, self.visit_count_distribution).state.get_value()
+                leaf_node).state.get_value()
         else:
             default_policy = DefaultPolicy()
             evalution = default_policy(leaf_node).state.get_value()
@@ -95,30 +95,6 @@ class MCTS:
         node.update(value)
         if node.parent is not None:
             self.backpropagate(node.parent, value)
-
-    def visit_count_distribution(self) -> np.ndarray:
-        '''
-        Returns the visit count distribution of the children of the root node.
-
-        Returns
-        -------
-        distribution: list
-            The visit count distribution of the children of the root node.
-        '''
-        visit_counts = [0] * BOARD_SIZE**2
-
-        for child in self.root_node.children:
-            prev_action = child.state.get_previous_action()
-            index = prev_action[0] * BOARD_SIZE + prev_action[1]
-            visit_counts[index] = child.visits
-        total_visit_count = sum(visit_counts)
-
-        if total_visit_count == 0:
-            return np.zeros(BOARD_SIZE**2)
-
-        distribution = np.array(
-            [count / total_visit_count for count in visit_counts])
-        return distribution
 
     def __call__(self) -> tuple[Node, list]:
         '''
@@ -145,4 +121,4 @@ class MCTS:
             evaluation = self.leaf_evaluation(leaf_node)
             self.backpropagate(leaf_node, evaluation)
             simulations += 1
-        return self.root_node.get_best_child(), self.visit_count_distribution()
+        return self.root_node.get_best_child(), self.root_node.visit_count_distribution()
