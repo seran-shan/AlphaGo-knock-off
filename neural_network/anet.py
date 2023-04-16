@@ -1,7 +1,7 @@
 '''
-This module contains a class to build a neural network model by using Keras
+This module contains a class to build a neural network model by using tf.Keras
 '''
-from tensorflow import keras
+import tensorflow as tf
 import numpy as np
 
 from config import Activation, Optimizer
@@ -9,7 +9,7 @@ from config import Activation, Optimizer
 
 class ANet:
     '''
-    A neural network model. Implmentation of ANet is based on Keras.
+    A neural network model. Implmentation of ANet is based on tf.Keras.
     '''
 
     def __init__(self, input_shape, output_shape, layers, activation, optimizer, learning_rate):
@@ -19,41 +19,41 @@ class ANet:
         self.activation = activation
         self.optimizer = optimizer
         self.learning_rate = learning_rate
-        self.model: keras.Model = self.build_model()
+        self.model: tf.keras.Model = self.build_model()
 
-    def build_model(self) -> keras.Model:
+    def build_model(self) -> tf.keras.Model:
         '''
         Build a neural network model
 
         Returns
         -------
-        keras.Model
+        tf.keras.Model
             A neural network model
         '''
-        model = keras.Sequential()
-        model.add(keras.layers.InputLayer(input_shape=self.input_shape))
+        model = tf.keras.Sequential()
+        model.add(tf.keras.layers.InputLayer(input_shape=self.input_shape))
         for layer in self.layers:
-            model.add(keras.layers.Dense(layer, activation=self.activation))
-        model.add(keras.layers.Dense(
+            model.add(tf.keras.layers.Dense(layer, activation=self.activation))
+        model.add(tf.keras.layers.Dense(
             self.output_shape, activation=Activation.SOFTMAX.value))
 
         match self.optimizer:
             case Optimizer.ADAGRAD.value:
-                model.compile(optimizer=keras.optimizers.Adagrad(learning_rate=self.learning_rate),
-                              loss=keras.losses.SparseCategoricalCrossentropy(),
-                              metrics=[keras.metrics.SparseCategoricalAccuracy()])
+                model.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=self.learning_rate),
+                              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
             case Optimizer.ADAM.value:
-                model.compile(optimizer=keras.optimizers.Adam(learning_rate=self.learning_rate),
-                              loss=keras.losses.SparseCategoricalCrossentropy(),
-                              metrics=[keras.metrics.SparseCategoricalAccuracy()])
+                model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate),
+                              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
             case Optimizer.RMSPROP.value:
-                model.compile(optimizer=keras.optimizers.RMSprop(learning_rate=self.learning_rate),
-                              loss=keras.losses.SparseCategoricalCrossentropy(),
-                              metrics=[keras.metrics.SparseCategoricalAccuracy()])
+                model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=self.learning_rate),
+                              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
             case Optimizer.SGD.value:
-                model.compile(optimizer=keras.optimizers.SGD(learning_rate=self.learning_rate),
-                              loss=keras.losses.SparseCategoricalCrossentropy(),
-                              metrics=[keras.metrics.SparseCategoricalAccuracy()])
+                model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=self.learning_rate),
+                              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
             case _:
                 raise ValueError('Invalid optimizer')
 
@@ -68,15 +68,19 @@ class ANet:
         minibatch : list[tuple]
             A minibatch of cases
         '''
-        feature_matrix = np.array([])
-        probability_distribution = np.array([])
+        feature_matrix = []
+        probability_distribution = []
 
         for sample in minibatch:
-            feature_matrix = np.append(feature_matrix, sample[0])
-            probability_distribution = np.append(
-                probability_distribution, sample[1])
+            feature_matrix.append(sample[0])
+            probability_distribution.append(sample[1])
 
-        self.model.fit(feature_matrix, probability_distribution)
+        feature_matrix = np.array(feature_matrix)
+        probability_distribution = np.array(probability_distribution)
+        self.model.fit(
+            x=feature_matrix,
+            y=probability_distribution,
+        )
 
     def predict(self, node_features: np.ndarray, distribution: np.ndarray):
         '''
@@ -110,7 +114,7 @@ class ANet:
         self.model.save(f'models/{identifier}_{epoch}')
 
 
-def load_model(identifier: str, M: int) -> keras.Model:
+def load_model(identifier: str, M: int) -> tf.keras.Model:
     '''
     Load the neural network model
 
@@ -124,11 +128,11 @@ def load_model(identifier: str, M: int) -> keras.Model:
 
     Returns
     -------
-    keras.Model
+    tf.keras.Model
         A neural network model
     '''
     try:
-        nets = [keras.models.load_model(
+        nets = [tf.keras.models.load_model(
             f'models/{identifier}_{i + 1}') for i in range(M)]
     except OSError as exc:
         raise OSError('No model found') from exc
