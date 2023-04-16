@@ -59,13 +59,16 @@ class Agent:
             replay_buffer: ReplayBuffer = None,
             save_interval=None,
             number_actual_games=None,
-            number_search_games=None
+            number_search_games=None,
+            identifier: str = "model",
+
     ):
         self.anet = anet or None
         self.replay_buffer = replay_buffer or ReplayBuffer(REPLAY_BUFFER_SIZE)
         self.save_interval = save_interval or SAVE_INTERVAL
         self.number_actual_games = number_actual_games or NUMBER_ACTUAL_GAMES
         self.number_search_games = number_search_games or NUMBER_SEARCH_GAMES
+        self.identifier = identifier
 
     def run(self, use_neural_network: bool = False):
         '''
@@ -124,4 +127,4 @@ class Agent:
             self.anet.train(minibatch)
 
             if actual_game % self.save_interval == 0:
-                self.anet.save()
+                self.anet.save(self.identifier, actual_game)

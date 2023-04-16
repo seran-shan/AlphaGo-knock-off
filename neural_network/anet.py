@@ -40,20 +40,20 @@ class ANet:
         match self.optimizer:
             case Optimizer.ADAGRAD.value:
                 model.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=self.learning_rate),
-                              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-                              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
+                              loss=tf.keras.losses.CategoricalCrossentropy(),
+                              metrics=[tf.keras.metrics.CategoricalAccuracy()])
             case Optimizer.ADAM.value:
                 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate),
-                              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-                              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
+                              loss=tf.keras.losses.CategoricalCrossentropy(),
+                              metrics=[tf.keras.metrics.CategoricalAccuracy()])
             case Optimizer.RMSPROP.value:
                 model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=self.learning_rate),
-                              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-                              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
+                              loss=tf.keras.losses.CategoricalCrossentropy(),
+                              metrics=[tf.keras.metrics.CategoricalAccuracy()])
             case Optimizer.SGD.value:
                 model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=self.learning_rate),
-                              loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-                              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
+                              loss=tf.keras.losses.CategoricalCrossentropy(),
+                              metrics=[tf.keras.metrics.CategoricalAccuracy()])
             case _:
                 raise ValueError('Invalid optimizer')
 
@@ -77,10 +77,7 @@ class ANet:
 
         feature_matrix = np.array(feature_matrix)
         probability_distribution = np.array(probability_distribution)
-        self.model.fit(
-            x=feature_matrix,
-            y=probability_distribution,
-        )
+        self.model.fit(feature_matrix, probability_distribution)
 
     def predict(self, node_features: np.ndarray):
         '''
@@ -114,7 +111,7 @@ class ANet:
         self.model.save(f'models/{identifier}_{epoch}')
 
 
-def load_model(identifier: str, M: int) -> tf.keras.Model:
+def load_models(identifier: str, M: int) -> tf.keras.Model:
     '''
     Load the neural network model
 

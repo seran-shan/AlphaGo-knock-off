@@ -1,49 +1,48 @@
 '''
-Main file for the Nim game.
+This is an example of how to use the neural network agents
 '''
-from config import INPUT_SHAPE, OUTPUT_SHAPE, LAYERS, ACTIVATION, OPTIMIZER, LEARNING_RATE
-from game import Hex
-from mcts import MCTS, Node
-from neural_network import ANet
+import argparse
+from neural_network import load_models
 from reinforcement_learning import Agent
 
 
-def main():
+def main(args):
     '''
-    Play Hex with a human and AI.
+    Main function
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        The parsed arguments
     '''
-    game = Hex(5)
-    root_node = Node(game)
+    if args.load_models:
+        nets = load_models('models', 1)
+        agent = Agent(anet=nets[0])
+        agent.run(use_neural_network=True)
 
-    while not game.is_terminal():
-        print(game.board)  # Display the game state
-        if game.player == 0:
-            move = game.get_move()
-            print("Human move: ", move)
-        else:
-            mcts = MCTS(root_node, 500)
-            best_child, dist = mcts()
-            move = best_child.state.get_previous_action()
-            print("AI move: ", move)
-            print("Distribution: ", dist)
-
-        game.make_move(move)
-        root_node = Node(game)
-
-    print(game.board)  # Display the final game state
-    if game.get_winner() == 1:
-        print("AI wins!")
     else:
-        print("Human wins!")
+        agent = Agent(anet=None)
+        agent.run(use_neural_network=False)
+
+
+def parse_args():
+    '''
+    Parse command line arguments
+
+    Returns
+    -------
+    argparse.Namespace
+        The parsed arguments
+    '''
+    parser = argparse.ArgumentParser(
+        description="An example CLI for neural network agents")
+
+    parser.add_argument("--load_models", action="store_true",
+                        help="Load pre-trained neural network models")
+
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    anet = ANet(input_shape=INPUT_SHAPE,
-                output_shape=OUTPUT_SHAPE,
-                layers=LAYERS,
-                activation=ACTIVATION,
-                optimizer=OPTIMIZER,
-                learning_rate=LEARNING_RATE)
-    # load_model(anet)
-    agent = Agent(anet=None)
-    agent.run(use_neural_network=False)
+    args = parse_args()
+    main(args)
