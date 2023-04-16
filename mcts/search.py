@@ -112,6 +112,10 @@ class MCTS:
             index = prev_action[0] * BOARD_SIZE + prev_action[1]
             visit_counts[index] = child.visits
         total_visit_count = sum(visit_counts)
+
+        if total_visit_count == 0:
+            return np.zeros(BOARD_SIZE**2)
+
         distribution = np.array(
             [count / total_visit_count for count in visit_counts])
         return distribution
