@@ -59,21 +59,24 @@ class ANet:
 
         return model
 
-    def train(self, node_features: np.ndarray, distribution: np.ndarray, target: np.ndarray, batch_size=1):
+    def train(self, minibatch: list[tuple]):
         '''
         Train the neural network model
 
         Parameters
         ----------
-        state : numpy.ndarray
-            A state of the game
-        target : numpy.ndarray
-            A target value of the state
-        batch_size : int
-            The number of samples per gradient update
+        minibatch : list[tuple]
+            A minibatch of cases
         '''
-        input_stack = np.hstack((node_features, distribution))
-        self.model.fit(input_stack, target, batch_size=batch_size)
+        feature_matrix = np.array([])
+        probability_distribution = np.array([])
+
+        for sample in minibatch:
+            feature_matrix = np.append(feature_matrix, sample[0])
+            probability_distribution = np.append(
+                probability_distribution, sample[1])
+
+        self.model.fit(feature_matrix, probability_distribution)
 
     def predict(self, node_features: np.ndarray, distribution: np.ndarray):
         '''
