@@ -26,7 +26,7 @@ class Activation(Enum):
     SOFTMAX = 'softmax'
 
 
-INPUT_SHAPE = (BOARD_SIZE, BOARD_SIZE, 1)
+INPUT_SHAPE = (BOARD_SIZE * BOARD_SIZE + 1)
 OUTPUT_SHAPE = (BOARD_SIZE * BOARD_SIZE)
 LAYERS = [64, 128]
 ACTIVATION = Activation.RELU.value
