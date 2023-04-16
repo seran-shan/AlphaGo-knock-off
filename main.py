@@ -2,7 +2,7 @@
 This is an example of how to use the neural network agents
 '''
 import argparse
-from neural_network.anet import load_models
+from neural_network import load_models
 from reinforcement_learning import Agent
 
 

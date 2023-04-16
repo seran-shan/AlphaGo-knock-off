@@ -1,1 +1,1 @@
-from .anet import ANet, load_model
+from .anet import ANet, load_models
