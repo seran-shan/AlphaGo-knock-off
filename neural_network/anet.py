@@ -82,7 +82,7 @@ class ANet:
             y=probability_distribution,
         )
 
-    def predict(self, node_features: np.ndarray, distribution: np.ndarray):
+    def predict(self, node_features: np.ndarray):
         '''
         Predict the value of the state
 
@@ -97,8 +97,8 @@ class ANet:
             A value of the state
         '''
 
-        input_stack = np.hstack((node_features, distribution))
-        return self.model.predict(input_stack)
+        # input_stack = np.hstack((node_features, distribution))
+        return self.model.predict(node_features)
 
     def save(self, identifier: str, epoch: int):
         '''
