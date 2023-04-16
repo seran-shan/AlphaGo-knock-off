@@ -82,7 +82,8 @@ class Agent:
                 while not game.is_terminal():
                     print(game.board)
                     best_child, distribution = mcts()
-                    self.replay_buffer.add_case((mcts.root_node, distribution))
+                    state_representation = mcts.root_node.state.extract_represenation()
+                    self.replay_buffer.add_case((state_representation, distribution))
                     action = best_child.state.get_previous_action()
                     print("AI move: ", action)
                     mcts.root_node.state.produce_successor_state(action)
@@ -94,7 +95,8 @@ class Agent:
                 while not game.is_terminal():
                     print(game.board)
                     best_child, distribution = mcts()
-                    self.replay_buffer.add_case((mcts.root_node, distribution))
+                    state_representation = mcts.root_node.state.extract_represenation()
+                    self.replay_buffer.add_case((state_representation, distribution))
                     action = best_child.state.get_previous_action()
                     print("AI move: ", action)
                     mcts.root_node.state.produce_successor_state(action)
