@@ -2,6 +2,7 @@
 This module contains the reinforcement learning algorithm
 '''
 import random
+from config.reinforcement_learning import NUMBER_ACTUAL_GAMES, NUMBER_SEARCH_GAMES, REPLAY_BUFFER, SAVE_INTERVAL
 from game.hex.hex import Hex
 from mcts import MCTS
 from mcts.node import Node
@@ -61,10 +62,10 @@ class Agent:
             number_search_games=None
     ):
         self.anet = anet or None
-        self.replay_buffer = replay_buffer or ReplayBuffer(1000)
-        self.save_interval = save_interval or 100
-        self.number_actual_games = number_actual_games or 1000
-        self.number_search_games = number_search_games or 100
+        self.replay_buffer = replay_buffer or REPLAY_BUFFER
+        self.save_interval = save_interval or SAVE_INTERVAL
+        self.number_actual_games = number_actual_games or NUMBER_ACTUAL_GAMES
+        self.number_search_games = number_search_games or NUMBER_SEARCH_GAMES
 
     def run(self, use_neural_network: bool = False):
         '''
