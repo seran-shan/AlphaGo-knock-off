@@ -2,9 +2,7 @@
 This module contains the reinforcement learning algorithm
 '''
 import random
-from config.general import BOARD_SIZE
-from config.neural_network import INPUT_SHAPE, OUTPUT_SHAPE, LAYERS, ACTIVATION, OPTIMIZER, LEARNING_RATE
-from config.reinforcement_learning import NUMBER_ACTUAL_GAMES, NUMBER_SEARCH_GAMES, REPLAY_BUFFER_SIZE, SAVE_INTERVAL
+from config import *
 from game.hex.hex import Hex
 from mcts import MCTS
 from mcts.node import Node
@@ -74,9 +72,9 @@ class Agent:
         Run the agent
         '''
         for actual_game in range(self.number_actual_games):
+            game = Hex(BOARD_SIZE)
+            root_node = Node(game)
             if use_neural_network:
-                game = Hex(BOARD_SIZE)
-                root_node = Node(game)
                 mcts = MCTS(root_node, self.number_search_games, self.anet)
 
                 while not game.is_terminal():
@@ -91,14 +89,20 @@ class Agent:
             else:
                 mcts = MCTS(root_node, self.number_search_games)
 
+                count = 1
                 while not game.is_terminal():
-                    print(game.board)
                     best_child, distribution = mcts()
                     self.replay_buffer.add_case((mcts.root_node, distribution))
                     action = best_child.state.get_previous_action()
-                    print("AI move: ", action)
+                    if count % 2 == 1:
+                        print("Player 1: ", action)
+                    else:
+                        print("Player 2: ", action)
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
+                    count += 1
+                    print(game.board)
+                print('Winner', game.get_winner())
 
                 self.anet = ANet(
                     input_shape=INPUT_SHAPE,
@@ -110,7 +114,9 @@ class Agent:
                 )
                 use_neural_network = True
 
-            minibatch = self.replay_buffer.sample_minibatch()
+            batch_size = min(REPLAY_BUFFER_SIZE, len(
+                self.replay_buffer.buffer))
+            minibatch = self.replay_buffer.sample_minibatch(batch_size)
             self.anet.train(minibatch)
 
             if actual_game % self.save_interval == 0:
