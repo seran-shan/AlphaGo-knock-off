@@ -6,6 +6,8 @@ import numpy as np
 from neural_network.anet import ANet
 from .node import Node
 from .policy import TargetPolicy, TreePolicy, DefaultPolicy
+import time
+from config import TIME_LIMIT
 
 
 class MCTS:
@@ -123,8 +125,13 @@ class MCTS:
         distribution: list
             The visit count distribution of the children of the root node.
         '''
-        for _ in range(self.n_simulations):
+        start_time = time.time()
+        time_limit = TIME_LIMIT
+        simulations = 0
+
+        while time.time() - start_time < time_limit and simulations < self.n_simulations:
             leaf_node: Node = self.search()
             evaluation = self.leaf_evaluation(leaf_node)
             self.backpropagate(leaf_node, evaluation)
+            simulations += 1
         return self.root_node.get_best_child(), self.visit_count_distribution()
