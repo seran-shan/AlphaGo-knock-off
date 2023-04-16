@@ -2,7 +2,9 @@
 This module contains the reinforcement learning algorithm
 '''
 import random
-from config.reinforcement_learning import NUMBER_ACTUAL_GAMES, NUMBER_SEARCH_GAMES, REPLAY_BUFFER, SAVE_INTERVAL
+from config.general import BOARD_SIZE
+from config.neural_network import INPUT_SHAPE, OUTPUT_SHAPE, LAYERS, ACTIVATION, OPTIMIZER, LEARNING_RATE
+from config.reinforcement_learning import NUMBER_ACTUAL_GAMES, NUMBER_SEARCH_GAMES, REPLAY_BUFFER_SIZE, SAVE_INTERVAL
 from game.hex.hex import Hex
 from mcts import MCTS
 from mcts.node import Node
@@ -62,7 +64,7 @@ class Agent:
             number_search_games=None
     ):
         self.anet = anet or None
-        self.replay_buffer = replay_buffer or REPLAY_BUFFER
+        self.replay_buffer = replay_buffer or ReplayBuffer(REPLAY_BUFFER_SIZE)
         self.save_interval = save_interval or SAVE_INTERVAL
         self.number_actual_games = number_actual_games or NUMBER_ACTUAL_GAMES
         self.number_search_games = number_search_games or NUMBER_SEARCH_GAMES
@@ -73,9 +75,9 @@ class Agent:
         '''
         for actual_game in range(self.number_actual_games):
             if use_neural_network:
-                game = Hex(5)
+                game = Hex(BOARD_SIZE)
                 root_node = Node(game)
-                mcts = MCTS(root_node, 100, self.anet)
+                mcts = MCTS(root_node, self.number_search_games, self.anet)
 
                 while not game.is_terminal():
                     print(game.board)
@@ -86,13 +88,8 @@ class Agent:
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
 
-                minibatch = self.replay_buffer.sample_minibatch()
-                self.anet.train(minibatch)
-
-                if actual_game % self.save_interval == 0:
-                    self.anet.save()
             else:
-                mcts = MCTS(root_node, 100)
+                mcts = MCTS(root_node, self.number_search_games)
 
                 while not game.is_terminal():
                     print(game.board)
@@ -102,3 +99,19 @@ class Agent:
                     print("AI move: ", action)
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
+
+                self.anet = ANet(
+                    input_shape=INPUT_SHAPE,
+                    output_shape=OUTPUT_SHAPE,
+                    layers=LAYERS,
+                    activation=ACTIVATION,
+                    optimizer=OPTIMIZER,
+                    learning_rate=LEARNING_RATE,
+                )
+                use_neural_network = True
+
+            minibatch = self.replay_buffer.sample_minibatch()
+            self.anet.train(minibatch)
+
+            if actual_game % self.save_interval == 0:
+                self.anet.save()
