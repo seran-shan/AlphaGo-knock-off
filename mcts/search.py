@@ -3,6 +3,7 @@ The search module contains the MCTS class, which is used to represent
 the Monte Carlo Tree Search algorithm.
 '''
 import numpy as np
+from config.general import BOARD_SIZE
 from neural_network.anet import ANet
 from .node import Node
 from .policy import TargetPolicy, TreePolicy, DefaultPolicy
@@ -104,6 +105,12 @@ class MCTS:
         distribution: list
             The visit count distribution of the children of the root node.
         '''
+        visit_counts = [0] * BOARD_SIZE**2
+
+        for child in self.root_node.children:
+            prev_action = child.state.get_previous_action()
+            index = prev_action[0] * BOARD_SIZE + prev_action[1]
+            visit_counts[index] = child.visits
         visit_counts = [child.visits for child in self.root_node.children]
         total_visit_count = sum(visit_counts)
         distribution = [count / total_visit_count for count in visit_counts]
