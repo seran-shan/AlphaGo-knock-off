@@ -60,6 +60,13 @@ class State:
         """
         pass
 
+    def extract_flatten_state(self):
+        """
+        Return the state
+
+        """
+        pass
+
 
 class Hex:
     """
@@ -319,3 +326,6 @@ class Hex:
         board_representation = np.hstack(
             [flat_board, player_to_move])
         return board_representation
+    
+    def extract_flatten_state(self):
+        return self.board.flatten()
