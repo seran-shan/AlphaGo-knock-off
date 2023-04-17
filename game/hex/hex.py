@@ -326,6 +326,45 @@ class Hex:
         board_representation = np.hstack(
             [flat_board, player_to_move])
         return board_representation
-    
+
     def extract_flatten_state(self):
         return self.board.flatten()
+
+    def draw(self):
+        '''
+        Draw the current state.
+        '''
+        even_row = True
+        l = self.size * 2 - 1
+        for i in range(l):
+            if even_row:
+                for j in range(i):
+                    # white spaces used for aligning the rows
+                    print(" ", end="")
+                # print the row with nodes
+                even = True
+                for j in range(l):
+                    if even:
+                        if self.board[i // 2][j // 2] == -1:
+                            print("X", end="")
+                        elif self.board[i // 2][j // 2] == 1:
+                            print("+", end="")
+                        else:
+                            print(self.board[i // 2][j // 2], end="")
+                    else:
+                        print(" - ", end="")
+                    even = not even
+            else:
+                # print the seperation row
+                # print the blank space to align the graph
+                for j in range(i):
+                    print(" ", end="")
+                even = True
+                for j in range(l):
+                    if even:
+                        print("\\ ", end="")
+                    else:
+                        print("/ ", end="")
+                    even = not even
+            even_row = not even_row
+            print()

@@ -80,16 +80,22 @@ class Actor:
             if use_neural_network:
                 mcts = MCTS(root_node, self.number_search_games, self.anet)
 
+                count = 1
                 while not game.is_terminal():
-                    print(game.board)
                     best_child, distribution = mcts()
                     state_representation = mcts.root_node.state.extract_representation()
                     self.replay_buffer.add_case(
                         (state_representation, distribution))
                     action = best_child.state.get_previous_action()
-                    print("AI move: ", action)
+                    if count % 2 == 1:
+                        print("\nPlayer 1: ", action)
+                    else:
+                        print("\nPlayer 2: ", action)
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
+                    count += 1
+                    game.draw()
+                print('Winner', game.get_winner())
 
             else:
                 mcts = MCTS(root_node, self.number_search_games)
@@ -102,13 +108,13 @@ class Actor:
                         (state_representation, distribution))
                     action = best_child.state.get_previous_action()
                     if count % 2 == 1:
-                        print("Player 1: ", action)
+                        print("\nPlayer 1: ", action)
                     else:
-                        print("Player 2: ", action)
+                        print("\nPlayer 2: ", action)
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
                     count += 1
-                    print(game.board)
+                    game.draw()
                 print('Winner', game.get_winner())
 
                 self.anet = ANet(
