@@ -1,1 +1,1 @@
-from .agent import Agent
+from .actor import Actor

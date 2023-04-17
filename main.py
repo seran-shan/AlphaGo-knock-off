@@ -1,9 +1,10 @@
 '''
-This is an example of how to use the neural network agents
+This is an example of how to use the neural network actors
 '''
 import argparse
 from neural_network import load_models
-from reinforcement_learning import Agent
+from reinforcement_learning import Actor
+from config import IDENTIFIER
 
 
 def main(args):
@@ -16,13 +17,13 @@ def main(args):
         The parsed arguments
     '''
     if args.load_models:
-        nets = load_models('model', 1)
-        agent = Agent(anet=nets[0])
-        agent.run(use_neural_network=True)
+        nets = load_models(IDENTIFIER, 1)
+        actor = Actor(anet=nets[0])
+        actor.run(use_neural_network=True)
 
     else:
-        agent = Agent(anet=None)
-        agent.run(use_neural_network=False)
+        actor = Actor(anet=None)
+        actor.run(use_neural_network=False)
 
 
 def parse_args():
@@ -35,7 +36,7 @@ def parse_args():
         The parsed arguments
     '''
     parser = argparse.ArgumentParser(
-        description="An example CLI for neural network agents")
+        description="An example CLI for neural network actors")
 
     parser.add_argument("--load_models", action="store_true",
                         help="Load pre-trained neural network models")

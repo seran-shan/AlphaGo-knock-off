@@ -11,7 +11,7 @@ from neural_network.anet import ANet
 
 class ReplayBuffer:
     '''
-    Replay buffer for storing past experiences that the agent can then use for
+    Replay buffer for storing past experiences that the Actor can then use for
     '''
 
     def __init__(self, buffer_size):
@@ -48,9 +48,9 @@ class ReplayBuffer:
         return random.sample(self.buffer, batch_size)
 
 
-class Agent:
+class Actor:
     '''
-    Agent class
+    Actor class
     '''
 
     def __init__(
@@ -72,7 +72,7 @@ class Agent:
 
     def run(self, use_neural_network: bool = False):
         '''
-        Run the agent
+        Run the Actor
         '''
         for actual_game in range(self.number_actual_games):
             game = Hex(BOARD_SIZE)
