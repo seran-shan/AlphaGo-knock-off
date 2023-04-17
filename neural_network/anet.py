@@ -95,6 +95,7 @@ class ANet:
         '''
 
         # input_stack = np.hstack((node_features, distribution))
+        node_features = np.expand_dims(node_features, axis=0)
         return self.model.predict(node_features)
 
     def save(self, identifier: str, epoch: int):
