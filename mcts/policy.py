@@ -125,7 +125,7 @@ class TargetPolicy:
     def __init__(self, neural_network: ANet):
         self.neural_network = neural_network
 
-    def __call__(self, leaf_node: Node, distribution: callable) -> Node:
+    def __call__(self, leaf_node: Node) -> Node:
         '''
         Using the target policy to evaluate the leaf node. Randomly selecting child
         nodes until the game is finished.
