@@ -3,6 +3,7 @@ This module contains a class to build a neural network model by using tf.Keras
 '''
 import tensorflow as tf
 import numpy as np
+from enum import Enum
 
 
 
