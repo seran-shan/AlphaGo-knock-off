@@ -4,7 +4,6 @@ This module contains a class to build a neural network model by using tf.Keras
 import tensorflow as tf
 import numpy as np
 
-from config import Activation, Optimizer
 
 
 class ANet:
@@ -140,3 +139,21 @@ def load_models(identifier: str, M: int) -> tf.keras.Model:
         raise Exception('Unknown error') from exc
 
     return nets
+class Optimizer(Enum):
+    '''
+    Optimizer enum
+    '''
+    ADAGRAD = 'adagrad'
+    ADAM = 'adam'
+    RMSPROP = 'rmsprop'
+    SGD = 'sgd'
+
+
+class Activation(Enum):
+    '''
+    Activation enum
+    '''
+    RELU = 'relu'
+    SIGMOID = 'sigmoid'
+    TANH = 'tanh'
+    SOFTMAX = 'softmax'
