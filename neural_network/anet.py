@@ -131,7 +131,7 @@ def load_models(identifier: str, M: int) -> tf.keras.Model:
     '''
     try:
         nets = [tf.keras.models.load_model(
-            f'models/{identifier}_{i + 1}') for i in range(M)]
+            f'models/{identifier}_{i}') for i in range(M)]
     except OSError as exc:
         raise OSError('No model found') from exc
     except ValueError as exc:

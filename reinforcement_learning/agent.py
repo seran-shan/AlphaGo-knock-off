@@ -60,7 +60,7 @@ class Agent:
             save_interval=None,
             number_actual_games=None,
             number_search_games=None,
-            identifier: str = "model",
+            identifier: str = None,
 
     ):
         self.anet = anet or None
@@ -68,7 +68,7 @@ class Agent:
         self.save_interval = save_interval or SAVE_INTERVAL
         self.number_actual_games = number_actual_games or NUMBER_ACTUAL_GAMES
         self.number_search_games = number_search_games or NUMBER_SEARCH_GAMES
-        self.identifier = identifier
+        self.identifier = identifier or IDENTIFIER
 
     def run(self, use_neural_network: bool = False):
         '''

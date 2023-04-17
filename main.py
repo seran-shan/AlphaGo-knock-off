@@ -16,7 +16,7 @@ def main(args):
         The parsed arguments
     '''
     if args.load_models:
-        nets = load_models('models', 1)
+        nets = load_models('model', 1)
         agent = Agent(anet=nets[0])
         agent.run(use_neural_network=True)
 
