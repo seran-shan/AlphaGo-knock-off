@@ -128,4 +128,4 @@ class Actor:
             self.anet.train(minibatch)
 
             if actual_game % self.save_interval == 0:
-                self.anet.save(self.identifier, actual_game)
+                self.anet.save(self.identifier, actual_game/SAVE_INTERVAL)

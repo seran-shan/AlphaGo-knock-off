@@ -118,7 +118,6 @@ def load_models(
     identifier: str,
     M: int,
     board_size: int,
-    save_interval: int = None
 ) -> tf.keras.Model:
     '''
     Load the neural network model
@@ -130,6 +129,9 @@ def load_models(
 
     M : int
         The number of models
+    
+    board_size : int
+        The size of the board
 
     Returns
     -------
@@ -137,15 +139,8 @@ def load_models(
         A neural network model
     '''
     try:
-        if save_interval:
-            nets = []
-            for i in range(M):
-                if i % save_interval == 0:
-                    nets.append(tf.keras.models.load_model(
-                        f'models/{identifier}_{i}_{board_size}x{board_size}'))
-        else:
-            nets = [tf.keras.models.load_model(
-                f'models/{identifier}_{i}_{board_size}x{board_size}') for i in range(M)]
+       nets = [tf.keras.models.load_model(
+             f'models/{identifier}_{i}_{board_size}x{board_size}') for i in range(M)]
     except OSError as exc:
         print('No model found')
     except ValueError as exc:
