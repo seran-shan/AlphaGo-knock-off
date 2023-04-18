@@ -3,9 +3,10 @@ This is an example of how to use the neural network actors
 '''
 import argparse
 from neural_network import load_models
+from neural_network.anet import ANet
 from reinforcement_learning import Actor
 from config import IDENTIFIER, BOARD_SIZE
-# from topp import TOPP
+from topp import TOPP
 
 
 def main(args):
@@ -19,8 +20,16 @@ def main(args):
     '''
     if args.load_models:
         nets = load_models(IDENTIFIER, M=3, board_size=BOARD_SIZE)
-        actor = Actor(anet=nets[1])
+        anet = ANet(nets[-1])
+        actor = Actor(anet=anet)
         actor.run(use_neural_network=True)
+
+    elif args.tournament:
+        models = load_models(IDENTIFIER, M=2, board_size=BOARD_SIZE)
+        agents = [model for model in models]
+        tournement = TOPP(agents)
+        tournement.tournement()
+        print(tournement.results)
 
     else:
         actor = Actor(anet=None)
@@ -42,19 +51,12 @@ def parse_args():
     parser.add_argument("--load_models", action="store_true",
                         help="Load pre-trained neural network models")
 
+    parser.add_argument("--tournament", action="store_true",
+                        help="Run a tournament")
+
     return parser.parse_args()
 
 
-# def main():
-#     # Load models
-#     models = load_models('model', M=2, board_size=7)
-#     # Create agents
-#     agents = [model for model in models]
-#     # Create tournement
-#     tournement = TOPP(agents)
-#     tournement.tournement()
-#     print(tournement.results)
-
-
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    args = parse_args()
+    main(args)

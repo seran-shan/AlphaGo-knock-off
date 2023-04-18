@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Main File (with models)",
+      "name": "Train with models",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/main.py",
@@ -13,7 +13,15 @@
       "args": ["--load_models"]
     },
     {
-      "name": "Python: Main File (without models)",
+      "name": "Run tournament",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "args": ["--tournament"]
+    },
+    {
+      "name": "Train without models",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/main.py",
