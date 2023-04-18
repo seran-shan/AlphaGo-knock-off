@@ -5,8 +5,7 @@ from math import sqrt
 import tensorflow as tf
 import numpy as np
 from enum import Enum
-from config import INPUT_SHAPE, OUTPUT_SHAPE, LAYERS, ACTIVATION, OPTIMIZER, LEARNING_RATE
-
+from config import INPUT_SHAPE, OUTPUT_SHAPE, LAYERS, ACTIVATION, OPTIMIZER, LEARNING_RATE, DATE
 
 class ANet:
     '''
