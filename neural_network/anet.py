@@ -109,7 +109,7 @@ class ANet:
         epoch : int
             The number of epochs
         '''
-        board_shape = sqrt(self.output_shape)
+        board_shape = int(sqrt(self.output_shape))
         self.model.save(
             f'models/{identifier}_{epoch}_{board_shape}x{board_shape}')
 
