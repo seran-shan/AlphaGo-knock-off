@@ -2,7 +2,6 @@
 This module contains the configuration of neural network model
 '''
 
-from enum import Enum
 from config.general import BOARD_SIZE
 
 INPUT_SHAPE = (BOARD_SIZE * BOARD_SIZE + 1)
