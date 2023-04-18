@@ -310,7 +310,7 @@ class Hex:
             neighbours.append((x, y + 1))
         return neighbours
 
-    def extract_representation(self):
+    def extract_representation(self, training=True):
         '''
         Extract a representation of the current state, to feed it to a neural network.
         '''
@@ -325,6 +325,8 @@ class Hex:
 
         board_representation = np.hstack(
             [flat_board, player_to_move])
+        if training:
+            return board_representation
         return np.expand_dims(board_representation, axis=0)
 
     def extract_flatten_state(self):

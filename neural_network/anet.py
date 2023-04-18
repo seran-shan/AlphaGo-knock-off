@@ -118,9 +118,9 @@ class ANet:
         epoch : int
             The number of epochs
         '''
-        board_shape = int(sqrt(self.output_shape))
+        board_size = int(sqrt(self.output_shape))
         self.model.save(
-            f'models/{identifier}_{epoch}_{board_shape}x{board_shape}')
+            f'models/{board_size}x{board_size}/{DATE}/{identifier}_{epoch}')
 
 
 def load_models(
@@ -149,7 +149,7 @@ def load_models(
     '''
     try:
         nets = [tf.keras.models.load_model(
-            f'models/{identifier}_{i}_{board_size}x{board_size}') for i in range(M)]
+            f'models/{board_size}x{board_size}/{DATE}/{identifier}_{i}' for i in range(M))]
     except OSError as exc:
         print('No model found')
     except ValueError as exc:

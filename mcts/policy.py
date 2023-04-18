@@ -139,10 +139,9 @@ class TargetPolicy:
             if leaf_node.children == []:
                 possible_next_states = leaf_node.state.expand()
                 leaf_node.expand(possible_next_states)
-            state_representation = leaf_node.state.extract_representation()
+            state_representation = leaf_node.state.extract_representation(False)
             target_dist = self.neural_network.predict(
-                state_representation,
-                verbose=0
+                state_representation
             )
             flatten_state = leaf_node.state.extract_flatten_state()
             legal_action = [1 if flatten_state[i] ==

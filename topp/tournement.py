@@ -40,7 +40,7 @@ class TOPP:
         game = Hex(7)
         node = Node(game)
         while not game.is_terminal():
-            state_repesentation = node.state.extract_representation()
+            state_repesentation = node.state.extract_representation(False)
             target_dist = player.predict(state_repesentation, verbose=0)
             flatten_state = node.state.extract_flatten_state()
             legal_action = [1 if flatten_state[i] == 0 else 0 for i in range(len(flatten_state))]
