@@ -1,10 +1,10 @@
 '''
 This module contains a class to build a neural network model by using tf.Keras
 '''
+from math import sqrt
 import tensorflow as tf
 import numpy as np
 from enum import Enum
-
 
 
 class ANet:
@@ -40,19 +40,19 @@ class ANet:
         match self.optimizer:
             case Optimizer.ADAGRAD.value:
                 model.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=self.learning_rate),
-                              loss=tf.keras.losses.CategoricalCrossentropy(),
+                              loss=tf.keras.losses.BinaryCrossentropy(),
                               metrics=[tf.keras.metrics.CategoricalAccuracy()])
             case Optimizer.ADAM.value:
                 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.learning_rate),
-                              loss=tf.keras.losses.CategoricalCrossentropy(),
+                              loss=tf.keras.losses.BinaryCrossentropy(),
                               metrics=[tf.keras.metrics.CategoricalAccuracy()])
             case Optimizer.RMSPROP.value:
                 model.compile(optimizer=tf.keras.optimizers.RMSprop(learning_rate=self.learning_rate),
-                              loss=tf.keras.losses.CategoricalCrossentropy(),
+                              loss=tf.keras.losses.BinaryCrossentropy(),
                               metrics=[tf.keras.metrics.CategoricalAccuracy()])
             case Optimizer.SGD.value:
                 model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=self.learning_rate),
-                              loss=tf.keras.losses.CategoricalCrossentropy(),
+                              loss=tf.keras.losses.BinaryCrossentropy(),
                               metrics=[tf.keras.metrics.CategoricalAccuracy()])
             case _:
                 raise ValueError('Invalid optimizer')
@@ -96,7 +96,7 @@ class ANet:
 
         # input_stack = np.hstack((node_features, distribution))
         node_features = np.expand_dims(node_features, axis=0)
-        return self.model.predict(node_features, verbose= 0)
+        return self.model.predict(node_features, verbose=0)
 
     def save(self, identifier: str, epoch: int):
         '''
@@ -109,10 +109,17 @@ class ANet:
         epoch : int
             The number of epochs
         '''
-        self.model.save(f'models/{identifier}_{epoch}')
+        board_shape = sqrt(self.output_shape)
+        self.model.save(
+            f'models/{identifier}_{epoch}_{board_shape}x{board_shape}')
 
 
-def load_models(identifier: str, M: int) -> tf.keras.Model:
+def load_models(
+    identifier: str,
+    M: int,
+    board_size: int,
+    save_interval: int = None
+) -> tf.keras.Model:
     '''
     Load the neural network model
 
@@ -130,16 +137,25 @@ def load_models(identifier: str, M: int) -> tf.keras.Model:
         A neural network model
     '''
     try:
-        nets = [tf.keras.models.load_model(
-            f'models/{identifier}_{i}') for i in range(M)]
+        if save_interval:
+            nets = []
+            for i in range(M):
+                if i % save_interval == 0:
+                    nets.append(tf.keras.models.load_model(
+                        f'models/{identifier}_{i}_{board_size}x{board_size}'))
+        else:
+            nets = [tf.keras.models.load_model(
+                f'models/{identifier}_{i}_{board_size}x{board_size}') for i in range(M)]
     except OSError as exc:
-        raise OSError('No model found') from exc
+        print('No model found')
     except ValueError as exc:
-        raise ValueError('Invalid model') from exc
+        print('Invalid model')
     except Exception as exc:
-        raise Exception('Unknown error') from exc
+        print('Unexpected error')
 
     return nets
+
+
 class Optimizer(Enum):
     '''
     Optimizer enum
