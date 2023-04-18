@@ -5,6 +5,7 @@ from math import sqrt
 import tensorflow as tf
 import numpy as np
 from enum import Enum
+from config import INPUT_SHAPE, OUTPUT_SHAPE, LAYERS, ACTIVATION, OPTIMIZER, LEARNING_RATE
 
 
 class ANet:
@@ -12,14 +13,26 @@ class ANet:
     A neural network model. Implmentation of ANet is based on tf.Keras.
     '''
 
-    def __init__(self, input_shape, output_shape, layers, activation, optimizer, learning_rate):
-        self.input_shape = input_shape
-        self.output_shape = output_shape
-        self.layers = layers
-        self.activation = activation
-        self.optimizer = optimizer
-        self.learning_rate = learning_rate
-        self.model: tf.keras.Model = self.build_model()
+    def __init__(
+        self,
+        input_shape: tuple = INPUT_SHAPE,
+        output_shape: int = OUTPUT_SHAPE,
+        layers: list = LAYERS,
+        activation: str = ACTIVATION,
+        optimizer: str = OPTIMIZER,
+        learning_rate: float = LEARNING_RATE,
+        model: tf.keras.Model = None,
+    ):
+        if model:
+            self.model: tf.keras.Model = model
+        else:
+            self.input_shape = input_shape
+            self.output_shape = output_shape
+            self.layers = layers
+            self.activation = activation
+            self.optimizer = optimizer
+            self.learning_rate = learning_rate
+            self.model: tf.keras.Model = self.build_model()
 
     def build_model(self) -> tf.keras.Model:
         '''
@@ -126,7 +139,7 @@ def load_models(
 
     M : int
         The number of models
-    
+
     board_size : int
         The size of the board
 
@@ -136,9 +149,8 @@ def load_models(
         A neural network model
     '''
     try:
-       nets = [tf.keras.models.load_model(
-             f'models/{identifier}_{0}_{board_size}x{board_size}'), tf.keras.models.load_model(
-             f'models/{identifier}_{20}_{board_size}x{board_size}')]
+        nets = [tf.keras.models.load_model(
+            f'models/{identifier}_{i}_{board_size}x{board_size}') for i in range(M)]
     except OSError as exc:
         print('No model found')
     except ValueError as exc:
