@@ -2,5 +2,6 @@
 General configuration file
 '''
 
-BOARD_SIZE = 4
-TIME_LIMIT = 2
+BOARD_SIZE = 5
+TIME_LIMIT = 3
+DATE = '04-18'

@@ -5,6 +5,7 @@ import argparse
 from neural_network import load_models
 from reinforcement_learning import Actor
 from config import IDENTIFIER
+from topp import TOPP
 
 
 def main(args):
@@ -40,10 +41,20 @@ def parse_args():
 
     parser.add_argument("--load_models", action="store_true",
                         help="Load pre-trained neural network models")
-
+    
     return parser.parse_args()
 
 
-if __name__ == "__main__":
-    args = parse_args()
-    main(args)
+# def main(): 
+#     # Load models 
+#     models = load_models('model', M=2, board_size=7)
+#     # Create agents
+#     agents = [model for model in models]
+#     # Create tournement
+#     tournement = TOPP(agents)
+#     tournement.tournement()
+#     print(tournement.results)
+
+
+# if __name__ == '__main__':
+#     main()
