@@ -2,5 +2,5 @@
 General configuration file
 '''
 
-BOARD_SIZE = 5
-TIME_LIMIT = 5
+BOARD_SIZE = 4
+TIME_LIMIT = 2

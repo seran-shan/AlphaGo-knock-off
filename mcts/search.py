@@ -5,7 +5,6 @@ the Monte Carlo Tree Search algorithm.
 import time
 
 import numpy as np
-from config import TIME_LIMIT, BOARD_SIZE
 from neural_network.anet import ANet
 from .node import Node
 from .policy import TargetPolicy, TreePolicy, DefaultPolicy
@@ -29,10 +28,13 @@ class MCTS:
             self,
             root_node: Node,
             n_simulations: int,
-            neural_network: ANet = None
+            time_limit: int,
+            neural_network: ANet = None,
+
     ):
         self.root_node: Node = root_node
         self.n_simulations: int = n_simulations
+        self.time_limit: int = time_limit
         self.neural_network = neural_network
 
     def search(self) -> Node:
@@ -113,10 +115,9 @@ class MCTS:
             The visit count distribution of the children of the root node.
         '''
         start_time = time.time()
-        time_limit = TIME_LIMIT
         simulations = 0
 
-        while time.time() - start_time < time_limit and simulations < self.n_simulations:
+        while time.time() - start_time < self.time_limit and simulations < self.n_simulations:
             leaf_node: Node = self.search()
             evaluation = self.leaf_evaluation(leaf_node)
             self.backpropagate(leaf_node, evaluation)

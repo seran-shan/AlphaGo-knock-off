@@ -59,16 +59,18 @@ class Actor:
             replay_buffer: ReplayBuffer = None,
             save_interval=None,
             number_actual_games=None,
-            number_search_games=None,
+            simulations=None,
             identifier: str = None,
+            time_limit: int = None
 
     ):
         self.anet = anet or None
         self.replay_buffer = replay_buffer or ReplayBuffer(REPLAY_BUFFER_SIZE)
         self.save_interval = save_interval or SAVE_INTERVAL
         self.number_actual_games = number_actual_games or NUMBER_ACTUAL_GAMES
-        self.number_search_games = number_search_games or NUMBER_SEARCH_GAMES
+        self.simulations = simulations or SIMULATIONS
         self.identifier = identifier or IDENTIFIER
+        self.time_limit = time_limit or TIME_LIMIT
 
     def run(self, use_neural_network: bool = False):
         '''
@@ -78,7 +80,7 @@ class Actor:
             game = Hex(BOARD_SIZE)
             root_node = Node(game)
             if use_neural_network:
-                mcts = MCTS(root_node, self.number_search_games, self.anet)
+                mcts = MCTS(root_node, self.simulations, self.time_limit, self.anet)
 
                 while not game.is_terminal():
                     best_child, distribution = mcts()
@@ -94,7 +96,7 @@ class Actor:
                 print('Winner', game.get_winner())
 
             else:
-                mcts = MCTS(root_node, self.number_search_games)
+                mcts = MCTS(root_node, self.simulations, self.time_limit)
 
                 count = 1
                 while not game.is_terminal():
