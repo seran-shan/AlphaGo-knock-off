@@ -17,8 +17,8 @@ def main(args):
         The parsed arguments
     '''
     if args.load_models:
-        nets = load_models(IDENTIFIER, 1)
-        actor = Actor(anet=nets[0])
+        nets = load_models(IDENTIFIER, M=11, board_size=4, save_interval=5)
+        actor = Actor(anet=nets[1])
         actor.run(use_neural_network=True)
 
     else:
