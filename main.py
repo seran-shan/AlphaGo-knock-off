@@ -4,8 +4,8 @@ This is an example of how to use the neural network actors
 import argparse
 from neural_network import load_models
 from reinforcement_learning import Actor
-from config import IDENTIFIER
-from topp import TOPP
+from config import IDENTIFIER, BOARD_SIZE
+# from topp import TOPP
 
 
 def main(args):
@@ -18,7 +18,7 @@ def main(args):
         The parsed arguments
     '''
     if args.load_models:
-        nets = load_models(IDENTIFIER, M=11, board_size=4)
+        nets = load_models(IDENTIFIER, M=3, board_size=BOARD_SIZE)
         actor = Actor(anet=nets[1])
         actor.run(use_neural_network=True)
 
@@ -41,12 +41,12 @@ def parse_args():
 
     parser.add_argument("--load_models", action="store_true",
                         help="Load pre-trained neural network models")
-    
+
     return parser.parse_args()
 
 
-# def main(): 
-#     # Load models 
+# def main():
+#     # Load models
 #     models = load_models('model', M=2, board_size=7)
 #     # Create agents
 #     agents = [model for model in models]

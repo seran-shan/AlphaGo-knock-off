@@ -80,7 +80,8 @@ class Actor:
             game = Hex(BOARD_SIZE)
             root_node = Node(game)
             if use_neural_network:
-                mcts = MCTS(root_node, self.simulations, self.time_limit, self.anet)
+                mcts = MCTS(root_node, self.simulations,
+                            self.time_limit, self.anet)
 
                 while not game.is_terminal():
                     best_child, distribution = mcts()
@@ -91,14 +92,12 @@ class Actor:
                     print(f'\nPlayer {game.player}: {action}')
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
-                    count += 1
                     game.draw()
                 print('Winner', game.get_winner())
 
             else:
                 mcts = MCTS(root_node, self.simulations, self.time_limit)
 
-                count = 1
                 while not game.is_terminal():
                     best_child, distribution = mcts()
                     state_representation = mcts.root_node.state.extract_representation()
@@ -108,7 +107,6 @@ class Actor:
                     print(f'\nPlayer {game.player}: {action}')
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
-                    count += 1
                     game.draw()
                 print('Winner', game.get_winner())
 

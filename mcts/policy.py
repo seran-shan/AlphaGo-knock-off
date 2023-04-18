@@ -141,9 +141,12 @@ class TargetPolicy:
                 leaf_node.expand(possible_next_states)
             state_representation = leaf_node.state.extract_representation()
             target_dist = self.neural_network.predict(
-                state_representation)
+                state_representation,
+                verbose=0
+            )
             flatten_state = leaf_node.state.extract_flatten_state()
-            legal_action = [1 if flatten_state[i] == 0 else 0 for i in range(len(flatten_state))]
+            legal_action = [1 if flatten_state[i] ==
+                            0 else 0 for i in range(len(flatten_state))]
             target_dist = np.array(target_dist) * np.array(legal_action)
             target_dist = target_dist[target_dist != 0]
             i = np.argmax(target_dist)
