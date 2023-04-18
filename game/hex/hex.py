@@ -325,7 +325,7 @@ class Hex:
 
         board_representation = np.hstack(
             [flat_board, player_to_move])
-        return board_representation
+        return np.expand_dims(board_representation, axis=0)
 
     def extract_flatten_state(self):
         return self.board.flatten()

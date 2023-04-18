@@ -93,9 +93,6 @@ class ANet:
         numpy.ndarray
             A value of the state
         '''
-
-        # input_stack = np.hstack((node_features, distribution))
-        node_features = np.expand_dims(node_features, axis=0)
         return self.model.predict(node_features, verbose=0)
 
     def save(self, identifier: str, epoch: int):
@@ -140,7 +137,8 @@ def load_models(
     '''
     try:
        nets = [tf.keras.models.load_model(
-             f'models/{identifier}_{i}_{board_size}x{board_size}') for i in range(M)]
+             f'models/{identifier}_{0}_{board_size}x{board_size}'), tf.keras.models.load_model(
+             f'models/{identifier}_{20}_{board_size}x{board_size}')]
     except OSError as exc:
         print('No model found')
     except ValueError as exc:
