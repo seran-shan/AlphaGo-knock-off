@@ -72,7 +72,7 @@ class Actor:
         self.identifier = identifier or IDENTIFIER
         self.time_limit = time_limit or TIME_LIMIT
 
-    def episilon(self, actual_game: int): 
+    def episilon(self, actual_game: int):
         '''
         Epsilon-greedy policy
 
@@ -87,7 +87,7 @@ class Actor:
             The epsilon value
         '''
         return EPSILON_DECAY ** actual_game
-    
+
     def run(self, use_neural_network: bool = False):
         '''
         Run the Actor
@@ -140,6 +140,7 @@ class Actor:
                 self.replay_buffer.buffer))
             minibatch = self.replay_buffer.sample_minibatch(batch_size)
             self.anet.train(minibatch)
+            print(f'Game {actual_game} finished.')
 
             if actual_game % self.save_interval == 0:
-                self.anet.save(self.identifier, actual_game/SAVE_INTERVAL)
+                self.anet.save(self.identifier, int(actual_game/SAVE_INTERVAL))
