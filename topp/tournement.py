@@ -1,4 +1,5 @@
 
+from config import IDENTIFIER, BOARD_SIZE
 from game import Hex
 from mcts import Node, MCTS
 import random
@@ -6,6 +7,7 @@ import math
 from neural_network import ANet, load_models
 import tensorflow as tf
 import numpy as np
+
 
 class TOPP:
     '''
@@ -37,7 +39,7 @@ class TOPP:
         players = [agent1, agent2]
         player = players[0]
 
-        game = Hex(7)
+        game = Hex(BOARD_SIZE)
         node = Node(game)
         while not game.is_terminal():
             state_repesentation = node.state.extract_representation(False)
@@ -46,7 +48,7 @@ class TOPP:
             legal_action = [1 if flatten_state[i] == 0 else 0 for i in range(len(flatten_state))]
             target_dist = np.array(target_dist) * np.array(legal_action)
             i = np.argmax(target_dist)
-            best_action = i // 7, i % 7
+            best_action = i // BOARD_SIZE, i % BOARD_SIZE
             node.state.produce_successor_state(best_action)
             self.change_agent(players, player)
         self.change_agent(players, player)
@@ -88,6 +90,3 @@ class TOPP:
         agents = agents.copy()
         agents.remove(agent)
         return agents[0]
-    
-
-

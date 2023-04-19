@@ -149,7 +149,7 @@ def load_models(
     '''
     try:
         nets = [tf.keras.models.load_model(
-            f'models/{board_size}x{board_size}/{DATE}/{identifier}_{i}' for i in range(M))]
+            f'models/{board_size}x{board_size}/{DATE}/{identifier}_{i}') for i in range(M)]
     except OSError as exc:
         print('No model found')
     except ValueError as exc:
