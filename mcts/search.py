@@ -8,7 +8,7 @@ import numpy as np
 from neural_network.anet import ANet
 from .node import Node
 from .policy import TargetPolicy, TreePolicy, DefaultPolicy
-
+import random
 
 class MCTS:
     '''
@@ -58,7 +58,7 @@ class MCTS:
 
         return curr_root_node
 
-    def leaf_evaluation(self, leaf_node: Node) -> int:
+    def leaf_evaluation(self, leaf_node: Node, epsilon: int) -> int:
         '''
         Estimating the value of a leaf node in the tree by doing a rollout simulation 
         using the default policy from the leaf node’s state to a final state.
@@ -73,7 +73,7 @@ class MCTS:
         evalution: int
             The value of the leaf node.
         '''
-        if self.neural_network:
+        if self.neural_network and random.uniform(0,1) > epsilon:
             target_policy = TargetPolicy(self.neural_network)
             evalution = target_policy(
                 leaf_node).state.get_value()
@@ -98,7 +98,7 @@ class MCTS:
         if node.parent is not None:
             self.backpropagate(node.parent, value)
 
-    def __call__(self) -> tuple[Node, list]:
+    def __call__(self, epsilon: float = None) -> tuple[Node, list]:
         '''
         Performing a Monte Carlo Tree Search using the tree policy to select the next node.
 
@@ -119,7 +119,7 @@ class MCTS:
 
         while time.time() - start_time < self.time_limit and simulations < self.n_simulations:
             leaf_node: Node = self.search()
-            evaluation = self.leaf_evaluation(leaf_node)
+            evaluation = self.leaf_evaluation(leaf_node, epsilon)
             self.backpropagate(leaf_node, evaluation)
             simulations += 1
         return self.root_node.get_best_child(), self.root_node.visit_count_distribution()

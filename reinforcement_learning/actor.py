@@ -72,6 +72,22 @@ class Actor:
         self.identifier = identifier or IDENTIFIER
         self.time_limit = time_limit or TIME_LIMIT
 
+    def episilon(self, actual_game: int): 
+        '''
+        Epsilon-greedy policy
+
+        Parameters
+        ----------
+        actual_game : int
+            The actual game
+
+        Returns
+        -------
+        float
+            The epsilon value
+        '''
+        return EPSILON_DECAY ** actual_game
+    
     def run(self, use_neural_network: bool = False):
         '''
         Run the Actor
@@ -84,7 +100,7 @@ class Actor:
                             self.time_limit, self.anet)
 
                 while not game.is_terminal():
-                    best_child, distribution = mcts()
+                    best_child, distribution = mcts(self.episilon(actual_game))
                     state_representation = mcts.root_node.state.extract_representation()
                     self.replay_buffer.add_case(
                         (state_representation, distribution))
