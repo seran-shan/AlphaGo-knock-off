@@ -21,6 +21,14 @@
       "args": ["--tournament"]
     },
     {
+      "name": "Play against AI",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "args": ["--play"]
+    },
+    {
       "name": "Train without models",
       "type": "python",
       "request": "launch",

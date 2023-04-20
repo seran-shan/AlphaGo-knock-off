@@ -29,7 +29,7 @@ def main(args):
         actor.run(use_neural_network=True)
 
     elif args.tournament:
-        models = load_models(IDENTIFIER, M=2, board_size=BOARD_SIZE)
+        models = load_models(IDENTIFIER, M=3, board_size=BOARD_SIZE)
         agents = [model for model in models]
         tournement = TOPP(agents)
         tournement.tournement()
@@ -38,7 +38,7 @@ def main(args):
 
     elif args.play:
         nets = load_models(IDENTIFIER, M=3, board_size=BOARD_SIZE)
-        anet = ANet(nets[-1]) if nets else ANet()
+        anet = ANet(model=nets[-1]) if nets else ANet()
         game = Hex(BOARD_SIZE)
         game.draw()
         root_node = Node(game)
@@ -54,9 +54,10 @@ def main(args):
                 target_dist = np.array(target_dist) * np.array(legal_action)
                 i = np.argmax(target_dist)
                 action = i // BOARD_SIZE, i % BOARD_SIZE
-                print(f'\nAI made: {action}')
+                print(f'\nAI move: {action}')
             else:
-                action = int(input("Enter a move: "))
+                action = game.get_move()
+                print(f'\Your move: {action}')
             game.make_move(action)
             game.draw()
             root_node = Node(game, parent=root_node)
