@@ -9,7 +9,7 @@ from mcts import Node
 from neural_network import load_models
 from neural_network.anet import ANet
 from reinforcement_learning import Actor
-from config import IDENTIFIER, BOARD_SIZE
+from config import IDENTIFIER, BOARD_SIZE, NUM_OF_MODELS
 from topp import TOPP
 
 
@@ -23,21 +23,31 @@ def main(args):
         The parsed arguments
     '''
     if args.load_models:
-        nets = load_models(IDENTIFIER, M=3, board_size=BOARD_SIZE)
+        nets = load_models(IDENTIFIER, M=(
+            NUM_OF_MODELS), board_size=BOARD_SIZE)
         anet = ANet(nets[-1])
         actor = Actor(anet=anet)
         actor.run(use_neural_network=True)
 
     elif args.tournament:
-        models = load_models(IDENTIFIER, M=6, board_size=BOARD_SIZE)
+        models = load_models(IDENTIFIER, M=(
+            NUM_OF_MODELS), board_size=BOARD_SIZE)
         agents = [model for model in models]
-        tournement = TOPP(agents)
-        tournement.tournement()
-        for result in tournement.results:
+        tournament = TOPP(agents)
+        tournament.tournament()
+        results = tournament.results
+        for i, result in enumerate(results):
             print(result)
+            if (i + 1) % (NUM_OF_MODELS - 1) == 0:
+                print('\n')
+
+    elif args.train:
+        actor = Actor(anet=None)
+        actor.run(use_neural_network=False)
 
     elif args.play:
-        nets = load_models(IDENTIFIER, M=3, board_size=BOARD_SIZE)
+        nets = load_models(IDENTIFIER, M=(
+            NUM_OF_MODELS), board_size=BOARD_SIZE)
         anet = ANet(model=nets[-1]) if nets else ANet()
         game = Hex(BOARD_SIZE)
         game.draw()
@@ -63,8 +73,7 @@ def main(args):
             root_node = Node(game, parent=root_node)
 
     else:
-        actor = Actor(anet=None)
-        actor.run(use_neural_network=False)
+        print("Please specify an argument")
 
 
 def parse_args():
@@ -84,6 +93,9 @@ def parse_args():
 
     parser.add_argument("--tournament", action="store_true",
                         help="Run a tournament")
+
+    parser.add_argument("--train", action="store_true",
+                        help="Train the neural network model")
 
     parser.add_argument("--play", action="store_true",
                         help="Play against the neural network model")

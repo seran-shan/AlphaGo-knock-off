@@ -10,6 +10,7 @@ import math
 from neural_network import ANet, load_models
 import tensorflow as tf
 import numpy as np
+from copy import copy
 
 
 class TOPP:
@@ -65,16 +66,11 @@ class TOPP:
         '''
         Play the tournament
         '''
-        # Create pairs of all agents
-        pairs = []
-        for i in range(len(self.models)):
-            for j in range(i+1, len(self.models)):
-                pairs.append((self.models[i], self.models[j]))
-
-        # Play the games
-        for pair in pairs:
-            self.play_game(pair[0], pair[1])
-            self.play_game(pair[1], pair[0])
+        for firstModel in self.models:
+            models = copy(self.models)
+            models.remove(firstModel)
+            for secondModel in models:
+                self.play_game(firstModel, secondModel)
 
     def change_agent(self, agents: list[ANet], agent: ANet) -> 'ANet':
         '''
