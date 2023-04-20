@@ -7,6 +7,7 @@ import numpy as np
 from enum import Enum
 from config import INPUT_SHAPE, OUTPUT_SHAPE, LAYERS, ACTIVATION, OPTIMIZER, LEARNING_RATE, DATE
 
+
 class ANet:
     '''
     A neural network model. Implmentation of ANet is based on tf.Keras.
@@ -147,9 +148,13 @@ def load_models(
     tf.keras.Model
         A neural network model
     '''
+    nets = []
     try:
-        nets = [tf.keras.models.load_model(
-            f'models/{board_size}x{board_size}/{DATE}/{identifier}_{i}') for i in range(M)]
+        # nets = [tf.keras.models.load_model(
+        #     f'models/{board_size}x{board_size}/{DATE}/{identifier}_{i}') for i in range(M)]
+        for i in range(M):
+            nets.append(tf.keras.models.load_model(
+                f'models/{board_size}x{board_size}/{DATE}/{identifier}_{i}'))
     except OSError as exc:
         print('No model found')
     except ValueError as exc:
