@@ -66,11 +66,11 @@ class TOPP:
         '''
         Play the tournament
         '''
-        for firstModel in self.models:
+        for first_model in self.models:
             models = copy(self.models)
-            models.remove(firstModel)
-            for secondModel in models:
-                self.play_game(firstModel, secondModel)
+            models.remove(first_model)
+            for second_model in models:
+                self.play_game(first_model, second_model)
 
     def change_agent(self, agents: list[ANet], agent: ANet) -> 'ANet':
         '''
