@@ -17,7 +17,6 @@ ACTIVATION = 'relu'
 OPTIMIZER = 'adam'
 LEARNING_RATE = 1e-2
 EPOCHS = 100
-BATCH_SIZE = 32
 
 '''
 This file contains the configuration for the reinforcement learning algorithm.
@@ -27,8 +26,5 @@ REPLAY_BATCH_SIZE = 32
 SAVE_INTERVAL = 2
 NUMBER_ACTUAL_GAMES = 10
 SIMULATIONS = 500
-SAVE_INTERVAL = 1
-NUMBER_ACTUAL_GAMES = 5
-SIMULATIONS = 100
 IDENTIFIER = 'model'
 EPSILON_DECAY = 0.95
