@@ -14,7 +14,7 @@ import numpy as np
 
 class TOPP:
     '''
-    Tournement of progressive policy to determine which of trained agents 
+    Tournament of progressive policy to determine which of trained agents 
     with different evolution is the best.
 
     '''
@@ -61,7 +61,7 @@ class TOPP:
 
     def tournament(self):
         '''
-        Play the tournement
+        Play the tournament
         '''
         # Create pairs of all agents
         pairs = []

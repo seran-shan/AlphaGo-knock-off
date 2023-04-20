@@ -1,9 +1,9 @@
 '''
 General configuration
 '''
-BOARD_SIZE = 3
+BOARD_SIZE = 5
 TIME_LIMIT = 2
-DATE = '04-19'
+DATE = '04-20'
 
 
 '''
