@@ -125,7 +125,7 @@ class TargetPolicy:
     def __init__(self, neural_network: ANet):
         self.neural_network = neural_network
 
-    def __call__(self, leaf_node: Node) -> Node:
+    def __call__(self, leaf_node: Node, epsilon: float) -> Node:
         '''
         Using the target policy to evaluate the leaf node. Randomly selecting child
         nodes until the game is finished.
@@ -140,14 +140,17 @@ class TargetPolicy:
                 possible_next_states = leaf_node.state.expand()
                 leaf_node.expand(possible_next_states)
             state_representation = leaf_node.state.extract_representation(False)
-            target_dist = self.neural_network.predict(
-                state_representation
-            )
+            target_dist = self.neural_network.predict(state_representation)
             flatten_state = leaf_node.state.extract_flatten_state()
             legal_action = [1 if flatten_state[i] ==
                             0 else 0 for i in range(len(flatten_state))]
+            # print(len(np.array(legal_action)))
+            # print(len(np.array(target_dist)))
             target_dist = np.array(target_dist) * np.array(legal_action)
             target_dist = target_dist[target_dist != 0]
             i = np.argmax(target_dist)
-            leaf_node = leaf_node.children[i]
+            if random.uniform(0,1) < epsilon:
+                leaf_node = random.choice(leaf_node.children)
+            else:
+                leaf_node = leaf_node.children[i]
         return leaf_node

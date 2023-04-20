@@ -3,7 +3,6 @@ The search module contains the MCTS class, which is used to represent
 the Monte Carlo Tree Search algorithm.
 '''
 import time
-
 import numpy as np
 from neural_network.anet import ANet
 from .node import Node
@@ -58,7 +57,7 @@ class MCTS:
 
         return curr_root_node
 
-    def leaf_evaluation(self, leaf_node: Node, epsilon: int) -> int:
+    def leaf_evaluation(self, leaf_node: Node, epsilon: float) -> int:
         '''
         Estimating the value of a leaf node in the tree by doing a rollout simulation 
         using the default policy from the leaf node’s state to a final state.
@@ -73,10 +72,10 @@ class MCTS:
         evalution: int
             The value of the leaf node.
         '''
-        if self.neural_network and random.uniform(0,1) > epsilon:
+        if self.neural_network:
             target_policy = TargetPolicy(self.neural_network)
             evalution = target_policy(
-                leaf_node).state.get_value()
+                leaf_node, epsilon).state.get_value()
         else:
             default_policy = DefaultPolicy()
             evalution = default_policy(leaf_node).state.get_value()

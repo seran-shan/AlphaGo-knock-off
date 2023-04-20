@@ -72,7 +72,7 @@ class Actor:
         self.identifier = identifier or IDENTIFIER
         self.time_limit = time_limit or TIME_LIMIT
 
-    def episilon(self, actual_game: int):
+    def episilon(self, actual_game: int) -> float:
         '''
         Epsilon-greedy policy
 
@@ -86,13 +86,13 @@ class Actor:
         float
             The epsilon value
         '''
-        return EPSILON_DECAY ** actual_game
+        return EPSILON_DECAY ** (actual_game+1)
 
     def run(self, use_neural_network: bool = False):
         '''
         Run the Actor
         '''
-        for actual_game in range(self.number_actual_games):
+        for actual_game in range(self.number_actual_games + 1):
             game = Hex(BOARD_SIZE)
             root_node = Node(game)
             if use_neural_network:
@@ -108,6 +108,7 @@ class Actor:
                     print(f'\nPlayer {game.player}: {action}')
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
+
                     game.draw()
                 print('Winner', game.get_winner())
 
@@ -123,6 +124,7 @@ class Actor:
                     print(f'\nPlayer {game.player}: {action}')
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
+
                     game.draw()
                 print('Winner', game.get_winner())
 
@@ -136,7 +138,7 @@ class Actor:
                 )
                 use_neural_network = True
 
-            batch_size = min(REPLAY_BUFFER_SIZE, len(
+            batch_size = min(REPLAY_BATCH_SIZE, len(
                 self.replay_buffer.buffer))
             minibatch = self.replay_buffer.sample_minibatch(batch_size)
             self.anet.train(minibatch)
