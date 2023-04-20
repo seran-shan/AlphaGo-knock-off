@@ -1,8 +1,8 @@
 '''
 General configuration
 '''
-BOARD_SIZE = 5
-TIME_LIMIT = 3
+BOARD_SIZE = 3
+TIME_LIMIT = 2
 DATE = '04-19'
 
 
@@ -21,9 +21,10 @@ BATCH_SIZE = 32
 '''
 This file contains the configuration for the reinforcement learning algorithm.
 '''
-REPLAY_BUFFER_SIZE = 100
+REPLAY_BUFFER_SIZE = 250
+REPLAY_BATCH_SIZE = 32
 SAVE_INTERVAL = 50
-NUMBER_ACTUAL_GAMES = 10000
-SIMULATIONS = 10000
+NUMBER_ACTUAL_GAMES = 100
+SIMULATIONS = 100
 IDENTIFIER = 'model'
 EPSILON_DECAY = 0.95
