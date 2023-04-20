@@ -6,6 +6,8 @@ import numpy as np
 
 from neural_network.anet import ANet
 from .node import Node
+from time import time
+import copy
 
 
 class TreePolicy:
@@ -64,7 +66,7 @@ class TreePolicy:
         exploration_bonus = self.c_punt * \
             np.sqrt(np.log(self.node.visits + epsilon) /
                     (child_node.visits + epsilon))
-        return q_value - exploration_bonus if child_node.state.player == 1 else q_value + exploration_bonus
+        return q_value - exploration_bonus if child_node.state.player == 0 else q_value + exploration_bonus
 
     def __call__(self) -> Node:
         '''
@@ -106,12 +108,15 @@ class DefaultPolicy:
         node: Node
             The leaf node.
         '''
+
         while not curr_node.is_terminal():
-            if curr_node.children == []:
-                possible_next_states = curr_node.state.expand()
-                curr_node.expand(possible_next_states)
-            curr_node = random.choice(curr_node.children)
+            next_state = curr_node.state.expand_random()
+            curr_node.add_child(next_state)
+            for child in curr_node.children:
+                if child.state == next_state:
+                    curr_node = child
         return curr_node
+
 
 
 class TargetPolicy:
@@ -136,21 +141,26 @@ class TargetPolicy:
             The leaf node.
         '''
         while not leaf_node.is_terminal():
-            if leaf_node.children == []:
-                possible_next_states = leaf_node.state.expand()
-                leaf_node.expand(possible_next_states)
             state_representation = leaf_node.state.extract_representation(False)
             target_dist = self.neural_network.predict(state_representation)
             flatten_state = leaf_node.state.extract_flatten_state()
             legal_action = [1 if flatten_state[i] ==
                             0 else 0 for i in range(len(flatten_state))]
-            # print(len(np.array(legal_action)))
-            # print(len(np.array(target_dist)))
+
             target_dist = np.array(target_dist) * np.array(legal_action)
             target_dist = target_dist[target_dist != 0]
             i = np.argmax(target_dist)
             if random.uniform(0,1) < epsilon:
-                leaf_node = random.choice(leaf_node.children)
+
+                next_state = leaf_node.state.expand_random()
+                leaf_node.add_child(next_state)
+                for child in leaf_node.children:
+                    if child.state == next_state:
+                        leaf_node = child
             else:
-                leaf_node = leaf_node.children[i]
+                next_state = leaf_node.state.expand_index(i)
+                leaf_node.add_child(next_state)
+                for child in leaf_node.children:
+                    if child.state == next_state:
+                        leaf_node = child
         return leaf_node

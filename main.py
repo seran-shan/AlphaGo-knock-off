@@ -29,7 +29,7 @@ def main(args):
         actor.run(use_neural_network=True)
 
     elif args.tournament:
-        models = load_models(IDENTIFIER, M=3, board_size=BOARD_SIZE)
+        models = load_models(IDENTIFIER, M=6, board_size=BOARD_SIZE)
         agents = [model for model in models]
         tournement = TOPP(agents)
         tournement.tournement()

@@ -3,6 +3,7 @@ This module exports the Hex game class.
 '''
 
 import copy
+import random
 import numpy as np
 from disjoint_set import DisjointSet
 
@@ -45,6 +46,13 @@ class State:
 
         """
         pass
+    
+    def get_legal_actions(self):
+        """
+        Return the legal actions from the current state
+
+        """
+        pass
 
     def produce_successor_state(self, action):
         """
@@ -66,6 +74,11 @@ class State:
 
         """
         pass
+    def expand_random(self):
+        pass
+    def expand_index(self, index):
+        pass
+
 
 
 class Hex:
@@ -220,6 +233,13 @@ class Hex:
         Return a list of legal moves. A move is a tuple (x, y) where x and y are the coordinates of the move.
         """
         return self.legal_moves
+    
+    def get_legal_actions(self):
+        """
+        Return a list of legal actions. An action is a tuple (x, y) where x and y are the coordinates of the action.
+        """
+        return self.get_legal_moves()
+
 
     def make_move(self, move):
         """
@@ -258,6 +278,25 @@ class Hex:
             state.make_move(move)
             states.append(state)
         return states
+    
+    def expand_random(self):
+        """
+        Return a random successor state.
+        """
+        move = random.choice(list(self.get_legal_moves()))
+        state = copy.deepcopy(self)
+        state.make_move(move)
+        return state
+    
+    def expand_index(self, index): 
+        '''
+        Return the successor state at index.
+        '''
+        move = list(self.get_legal_moves())[index]
+        state = copy.deepcopy(self)
+        state.make_move(move)
+        return state
+    
 
     def check_winner(self):
         """

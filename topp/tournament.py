@@ -51,9 +51,11 @@ class TOPP:
             legal_action = [1 if flatten_state[i] ==
                             0 else 0 for i in range(len(flatten_state))]
             target_dist = np.array(target_dist) * np.array(legal_action)
+
             i = np.argmax(target_dist)
             best_action = i // BOARD_SIZE, i % BOARD_SIZE
             node.state.produce_successor_state(best_action)
+
             self.change_agent(players, player)
         self.change_agent(players, player)
         self.results.append(

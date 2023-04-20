@@ -96,9 +96,9 @@ class Actor:
             game = Hex(BOARD_SIZE)
             root_node = Node(game)
             if use_neural_network:
+                
                 mcts = MCTS(root_node, self.simulations,
                             self.time_limit, self.anet)
-
                 while not game.is_terminal():
                     best_child, distribution = mcts(self.episilon(actual_game))
                     state_representation = mcts.root_node.state.extract_representation()
