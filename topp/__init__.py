@@ -1,1 +1,4 @@
-from .tournement import TOPP
+'''
+Expoerts tournament module
+'''
+from .tournament import TOPP
