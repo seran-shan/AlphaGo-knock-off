@@ -29,7 +29,11 @@ class TreePolicy:
         max_child_node: Node
             The child node with the highest value.
         '''
-        return max(self.node.children, key=self.calculate_value)
+        max_value = max(self.calculate_value(child) for child in self.node.children)
+        max_child_nodes = [child for child in self.node.children if self.calculate_value(child) == max_value]
+        return random.choice(max_child_nodes)
+
+        # return max(self.node.children, key=self.calculate_value)
 
     def minimize(self) -> Node:
         '''
@@ -40,7 +44,11 @@ class TreePolicy:
         min_child_node: Node
             The child node with the lowest value.
         '''
-        return min(self.node.children, key=self.calculate_value)
+        min_value = min(self.calculate_value(child) for child in self.node.children)
+        min_child_nodes = [child for child in self.node.children if self.calculate_value(child) == min_value]
+        return random.choice(min_child_nodes)
+
+        # return min(self.node.children, key=self.calculate_value)
 
     def calculate_value(self, child_node: Node) -> float:
         '''
@@ -66,7 +74,7 @@ class TreePolicy:
         exploration_bonus = self.c_punt * \
             np.sqrt(np.log(self.node.visits + epsilon) /
                     (child_node.visits + epsilon))
-        return q_value - exploration_bonus if child_node.state.player == 0 else q_value + exploration_bonus
+        return q_value + exploration_bonus if self.node.state.player == 1 else q_value - exploration_bonus
 
     def __call__(self) -> Node:
         '''
@@ -110,6 +118,7 @@ class DefaultPolicy:
         '''
 
         while not curr_node.is_terminal():
+
             next_state = curr_node.state.expand_random()
             curr_node.add_child(next_state)
             for child in curr_node.children:
@@ -141,23 +150,27 @@ class TargetPolicy:
             The leaf node.
         '''
         while not leaf_node.is_terminal():
-            state_representation = leaf_node.state.extract_representation(False)
-            target_dist = self.neural_network.predict(state_representation)
-            flatten_state = leaf_node.state.extract_flatten_state()
-            legal_action = [1 if flatten_state[i] ==
-                            0 else 0 for i in range(len(flatten_state))]
-
-            target_dist = np.array(target_dist) * np.array(legal_action)
-            target_dist = target_dist[target_dist != 0]
-            i = np.argmax(target_dist)
-            if random.uniform(0,1) < epsilon:
+            if (random.uniform(0,1) < epsilon):
 
                 next_state = leaf_node.state.expand_random()
                 leaf_node.add_child(next_state)
                 for child in leaf_node.children:
                     if child.state == next_state:
                         leaf_node = child
+
+
             else:
+
+                state_representation = leaf_node.state.extract_representation(False)
+                target_dist = self.neural_network.predict(state_representation)
+                flatten_state = leaf_node.state.extract_flatten_state()
+                legal_action = [1 if flatten_state[i] ==
+                                0 else 0 for i in range(len(flatten_state))]
+
+                target_dist = np.array(target_dist) * np.array(legal_action)
+                target_dist = target_dist[target_dist != 0]
+                i = np.argmax(target_dist)
+
                 next_state = leaf_node.state.expand_index(i)
                 leaf_node.add_child(next_state)
                 for child in leaf_node.children:

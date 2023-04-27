@@ -4,6 +4,7 @@ This module contains the Node class, which is used to represent a node in the se
 from config import BOARD_SIZE
 from game import State
 import numpy as np
+import random
 
 
 class Node:
@@ -14,6 +15,7 @@ class Node:
     def __init__(self, state: State, parent=None):
         self.state = state
         self.parent: 'Node' = parent
+        #intialize children as empty numpy array with the same function as self.children = []:  list['Node'] = []
         self.children: list['Node'] = []
         self.visits: int = 0
         self.value: float = 0
@@ -153,7 +155,14 @@ class Node:
         best_child : Node
             The best child node. If player is 1, then the best child is a maximum, otherwise it is a minimum.
         '''
-        return max(self.children, key=lambda node: node.visits / sum(child.visits for child in self.children))
+        # return max value of random of one of the largest values
+        total_visits = sum(child.visits for child in self.children)
+        max_ratio = max(child.visits / total_visits for child in self.children)
+        best_children = [child for child in self.children if child.visits / total_visits == max_ratio]
+        return random.choice(best_children)
+
+
+        # return max(self.children, key=lambda node: node.visits / sum(child.visits for child in self.children))
 
     def __str__(self) -> str:
         return f'Node({self.state}, {self.visits}, {self.value})'

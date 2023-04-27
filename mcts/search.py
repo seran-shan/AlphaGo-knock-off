@@ -36,6 +36,7 @@ class MCTS:
         self.time_limit: int = time_limit
         self.neural_network = neural_network
 
+
     def search(self) -> Node:
         '''
         Performing tree search with the tree policy.
@@ -116,9 +117,11 @@ class MCTS:
         start_time = time.time()
         simulations = 0
 
-        while time.time() - start_time < self.time_limit and simulations < self.n_simulations:
+        while (time.time() - start_time < self.time_limit or simulations < self.n_simulations) and (time.time() - start_time < 8):
+            test_time = time.time()
             leaf_node: Node = self.search()
             evaluation = self.leaf_evaluation(leaf_node, epsilon)
             self.backpropagate(leaf_node, evaluation)
             simulations += 1
+        print("Simulations: ", simulations)
         return self.root_node.get_best_child(), self.root_node.visit_count_distribution()
