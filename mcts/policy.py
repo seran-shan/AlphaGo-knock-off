@@ -150,7 +150,7 @@ class TargetPolicy:
             The leaf node.
         '''
         while not leaf_node.is_terminal():
-            if (random.uniform(0,1) < epsilon):
+            if (random.random() < epsilon):
 
                 next_state = leaf_node.state.expand_random()
                 leaf_node.add_child(next_state)
@@ -158,11 +158,9 @@ class TargetPolicy:
                     if child.state == next_state:
                         leaf_node = child
 
-
             else:
-
                 state_representation = leaf_node.state.extract_representation(False)
-                target_dist = self.neural_network.predict(state_representation)
+                target_dist = self.neural_network.model(state_representation)
                 flatten_state = leaf_node.state.extract_flatten_state()
                 legal_action = [1 if flatten_state[i] ==
                                 0 else 0 for i in range(len(flatten_state))]
