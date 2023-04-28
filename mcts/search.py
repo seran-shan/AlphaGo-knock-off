@@ -116,8 +116,12 @@ class MCTS:
         '''
         start_time = time.time()
         simulations = 0
+        if self.neural_network:
+            second_time_limit = 8
+        else:
+            second_time_limit = 40
 
-        while (time.time() - start_time < self.time_limit or simulations < self.n_simulations) and (time.time() - start_time < 8):
+        while (time.time() - start_time < self.time_limit or simulations < self.n_simulations) and (time.time() - start_time < second_time_limit):
             test_time = time.time()
             leaf_node: Node = self.search()
             evaluation = self.leaf_evaluation(leaf_node, epsilon)

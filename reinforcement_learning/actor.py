@@ -113,7 +113,7 @@ class Actor:
                 print('Winner', game.get_winner())
 
             else:
-                mcts = MCTS(root_node, self.simulations, self.time_limit)
+                mcts = MCTS(root_node, 2500, self.time_limit)
 
                 while not game.is_terminal():
                     best_child, distribution = mcts()
