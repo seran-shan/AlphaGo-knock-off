@@ -11,7 +11,7 @@ from neural_network.anet import ANet
 
 class ReplayBuffer:
     '''
-    Replay buffer for storing past experiences that the agent can then use for
+    Replay buffer for storing past experiences that the Actor can then use for
     '''
 
     def __init__(self, buffer_size):
@@ -48,9 +48,9 @@ class ReplayBuffer:
         return random.sample(self.buffer, batch_size)
 
 
-class Agent:
+class Actor:
     '''
-    Agent class
+    Actor class
     '''
 
     def __init__(
@@ -59,56 +59,73 @@ class Agent:
             replay_buffer: ReplayBuffer = None,
             save_interval=None,
             number_actual_games=None,
-            number_search_games=None,
-            identifier: str = "model",
+            simulations=None,
+            identifier: str = None,
+            time_limit: int = None
 
     ):
         self.anet = anet or None
         self.replay_buffer = replay_buffer or ReplayBuffer(REPLAY_BUFFER_SIZE)
         self.save_interval = save_interval or SAVE_INTERVAL
         self.number_actual_games = number_actual_games or NUMBER_ACTUAL_GAMES
-        self.number_search_games = number_search_games or NUMBER_SEARCH_GAMES
-        self.identifier = identifier
+        self.simulations = simulations or SIMULATIONS
+        self.identifier = identifier or IDENTIFIER
+        self.time_limit = time_limit or TIME_LIMIT
+
+    def episilon(self, actual_game: int) -> float:
+        '''
+        Epsilon-greedy policy
+
+        Parameters
+        ----------
+        actual_game : int
+            The actual game
+
+        Returns
+        -------
+        float
+            The epsilon value
+        '''
+        return EPSILON_DECAY ** (actual_game+1)
 
     def run(self, use_neural_network: bool = False):
         '''
-        Run the agent
+        Run the Actor
         '''
-        for actual_game in range(self.number_actual_games):
+        for actual_game in range(self.number_actual_games + 1):
             game = Hex(BOARD_SIZE)
             root_node = Node(game)
             if use_neural_network:
-                mcts = MCTS(root_node, self.number_search_games, self.anet)
-
+                
+                mcts = MCTS(root_node, self.simulations,
+                            self.time_limit, self.anet)
                 while not game.is_terminal():
-                    print(game.board)
-                    best_child, distribution = mcts()
+                    best_child, distribution = mcts(self.episilon(actual_game))
                     state_representation = mcts.root_node.state.extract_representation()
                     self.replay_buffer.add_case(
                         (state_representation, distribution))
                     action = best_child.state.get_previous_action()
-                    print("AI move: ", action)
+                    print(f'\nPlayer {game.player}: {action}')
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
+
+                    game.draw()
+                print('Winner', game.get_winner())
 
             else:
-                mcts = MCTS(root_node, self.number_search_games)
+                mcts = MCTS(root_node, 2500, self.time_limit)
 
-                count = 1
                 while not game.is_terminal():
                     best_child, distribution = mcts()
                     state_representation = mcts.root_node.state.extract_representation()
                     self.replay_buffer.add_case(
                         (state_representation, distribution))
                     action = best_child.state.get_previous_action()
-                    if count % 2 == 1:
-                        print("Player 1: ", action)
-                    else:
-                        print("Player 2: ", action)
+                    print(f'\nPlayer {game.player}: {action}')
                     mcts.root_node.state.produce_successor_state(action)
                     mcts.root_node = Node(mcts.root_node.state)
-                    count += 1
-                    print(game.board)
+
+                    game.draw()
                 print('Winner', game.get_winner())
 
                 self.anet = ANet(
@@ -121,10 +138,11 @@ class Agent:
                 )
                 use_neural_network = True
 
-            batch_size = min(REPLAY_BUFFER_SIZE, len(
+            batch_size = min(REPLAY_BATCH_SIZE, len(
                 self.replay_buffer.buffer))
             minibatch = self.replay_buffer.sample_minibatch(batch_size)
             self.anet.train(minibatch)
+            print(f'Game {actual_game} finished.')
 
             if actual_game % self.save_interval == 0:
-                self.anet.save(self.identifier, actual_game)
+                self.anet.save(self.identifier, int(actual_game/SAVE_INTERVAL))

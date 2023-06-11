@@ -3,13 +3,11 @@ The search module contains the MCTS class, which is used to represent
 the Monte Carlo Tree Search algorithm.
 '''
 import time
-
 import numpy as np
-from config import TIME_LIMIT, BOARD_SIZE
 from neural_network.anet import ANet
 from .node import Node
 from .policy import TargetPolicy, TreePolicy, DefaultPolicy
-
+import random
 
 class MCTS:
     '''
@@ -29,11 +27,15 @@ class MCTS:
             self,
             root_node: Node,
             n_simulations: int,
-            neural_network: ANet = None
+            time_limit: int,
+            neural_network: ANet = None,
+
     ):
         self.root_node: Node = root_node
         self.n_simulations: int = n_simulations
+        self.time_limit: int = time_limit
         self.neural_network = neural_network
+
 
     def search(self) -> Node:
         '''
@@ -56,7 +58,7 @@ class MCTS:
 
         return curr_root_node
 
-    def leaf_evaluation(self, leaf_node: Node) -> int:
+    def leaf_evaluation(self, leaf_node: Node, epsilon: float) -> int:
         '''
         Estimating the value of a leaf node in the tree by doing a rollout simulation 
         using the default policy from the leaf node’s state to a final state.
@@ -74,7 +76,7 @@ class MCTS:
         if self.neural_network:
             target_policy = TargetPolicy(self.neural_network)
             evalution = target_policy(
-                leaf_node).state.get_value()
+                leaf_node, epsilon).state.get_value()
         else:
             default_policy = DefaultPolicy()
             evalution = default_policy(leaf_node).state.get_value()
@@ -96,7 +98,7 @@ class MCTS:
         if node.parent is not None:
             self.backpropagate(node.parent, value)
 
-    def __call__(self) -> tuple[Node, list]:
+    def __call__(self, epsilon: float = None) -> tuple[Node, list]:
         '''
         Performing a Monte Carlo Tree Search using the tree policy to select the next node.
 
@@ -113,12 +115,15 @@ class MCTS:
             The visit count distribution of the children of the root node.
         '''
         start_time = time.time()
-        time_limit = TIME_LIMIT
         simulations = 0
+        MAX_TIME_LIMIT = 10
+ 
 
-        while time.time() - start_time < time_limit and simulations < self.n_simulations:
+        while (time.time() - start_time < self.time_limit or simulations < self.n_simulations) and (time.time() - start_time < MAX_TIME_LIMIT):
+            test_time = time.time()
             leaf_node: Node = self.search()
-            evaluation = self.leaf_evaluation(leaf_node)
+            evaluation = self.leaf_evaluation(leaf_node, epsilon)
             self.backpropagate(leaf_node, evaluation)
             simulations += 1
+        print("Simulations: ", simulations)
         return self.root_node.get_best_child(), self.root_node.visit_count_distribution()

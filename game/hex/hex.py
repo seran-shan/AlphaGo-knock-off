@@ -3,6 +3,7 @@ This module exports the Hex game class.
 '''
 
 import copy
+import random
 import numpy as np
 from disjoint_set import DisjointSet
 
@@ -46,6 +47,13 @@ class State:
         """
         pass
 
+    def get_legal_actions(self):
+        """
+        Return the legal actions from the current state
+
+        """
+        pass
+
     def produce_successor_state(self, action):
         """
         Return the successor state after performing the action
@@ -58,6 +66,25 @@ class State:
         Return the representation of the state
 
         """
+        pass
+
+    def extract_flatten_state(self):
+        """
+        Return the state
+
+        """
+        pass
+
+    def expand_random(self):
+        '''
+        Expand the current node by performing a random move.
+        '''
+        pass
+
+    def expand_index(self, index):
+        '''
+        Expand the current node by performing the move at the given index.
+        '''
         pass
 
 
@@ -214,6 +241,12 @@ class Hex:
         """
         return self.legal_moves
 
+    def get_legal_actions(self):
+        """
+        Return a list of legal actions. An action is a tuple (x, y) where x and y are the coordinates of the action.
+        """
+        return self.get_legal_moves()
+
     def make_move(self, move):
         """
         Make a move on the board, change the player to move, and check if the game is over.
@@ -251,6 +284,24 @@ class Hex:
             state.make_move(move)
             states.append(state)
         return states
+
+    def expand_random(self):
+        """
+        Return a random successor state.
+        """
+        move = random.choice(list(self.get_legal_moves()))
+        state = copy.deepcopy(self)
+        state.make_move(move)
+        return state
+
+    def expand_index(self, index):
+        '''
+        Return the successor state at index.
+        '''
+        move = list(self.get_legal_moves())[index]
+        state = copy.deepcopy(self)
+        state.make_move(move)
+        return state
 
     def check_winner(self):
         """
@@ -303,7 +354,7 @@ class Hex:
             neighbours.append((x, y + 1))
         return neighbours
 
-    def extract_representation(self):
+    def extract_representation(self, training=True):
         '''
         Extract a representation of the current state, to feed it to a neural network.
         '''
@@ -318,4 +369,48 @@ class Hex:
 
         board_representation = np.hstack(
             [flat_board, player_to_move])
-        return board_representation
+        if training:
+            return board_representation
+        return np.expand_dims(board_representation, axis=0)
+
+    def extract_flatten_state(self):
+        return self.board.flatten()
+
+    def draw(self):
+        '''
+        Draw the current state.
+        '''
+        even_row = True
+        l = self.size * 2 - 1
+        for i in range(l):
+            if even_row:
+                for j in range(i):
+                    # white spaces used for aligning the rows
+                    print(" ", end="")
+                # print the row with nodes
+                even = True
+                for j in range(l):
+                    if even:
+                        if self.board[i // 2][j // 2] == -1:
+                            print("X", end="")
+                        elif self.board[i // 2][j // 2] == 1:
+                            print("+", end="")
+                        else:
+                            print(self.board[i // 2][j // 2], end="")
+                    else:
+                        print(" - ", end="")
+                    even = not even
+            else:
+                # print the seperation row
+                # print the blank space to align the graph
+                for j in range(i):
+                    print(" ", end="")
+                even = True
+                for j in range(l):
+                    if even:
+                        print("\\ ", end="")
+                    else:
+                        print("/ ", end="")
+                    even = not even
+            even_row = not even_row
+            print()
