@@ -1,4 +1,0 @@
-disjoint-set==0.7.3
-numpy==1.19.5
-pandas==1.5.3
-tensorflow==2.5.0
